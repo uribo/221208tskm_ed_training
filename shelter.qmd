@@ -1,25 +1,43 @@
-###############################
-# 徳島県オープンデータポータルサイト
-# https://opendata.pref.tokushima.lg.jp/dataset/487.html
-# 緊急避難場所 (徳島県)
-# 洪水_登録データ一覧_2022年10月26日.csv (CSV 121KB)
-################################
+---
+title: "研修資料"
+author: "瓜生真也"
+format: html
+---
 
-# 1. パッケージの読み込み -----------------------------------------------------------
-library(readr)
-library(dplyr)
-library(sf)
-library(ggplot2)
-library(mapview)
+```{r}
+library(rmarkdown)
+library(ragg)
+```
 
+徳島県オープンデータポータルサイトから[緊急避難場所 (徳島県)](https://opendata.pref.tokushima.lg.jp/dataset/487.html)のデータをRで読み込み、処理します。
+リンク先にはいくつかのデータがあります。ここでは「洪水_登録データ一覧_2022年10月26日.csv (CSV 121KB)」を例に解説を行います。
 
+## 1. パッケージの読み込み
 
-# 2. データの読み込み -------------------------------------------------------------
+Rでは**パッケージ**と呼ばれる機能拡張をユーザーが自由に導入することが可能です。
+パッケージの導入により、Rで実現可能な枠が広がります。
+Rのインストール時に利用可能な、組み込みパッケージがありますが、これに加えていくつかのパッケージを導入しておくと、Rでの作業が快適になります。
+
+```{r}
+library(readr) # 表形式データの読み込み
+library(dplyr) # データ操作
+library(sf) # 地理空間データの操作
+library(ggplot2) # データ可視化
+library(mapview) # 地図のインタラクティブな操作
+```
+
+## 2. データの読み込み
+
+```{r}
 df_hinanjyo <- 
   read_csv(file = "https://opendata.pref.tokushima.lg.jp/dataset/487/resource/6553/%E6%B4%AA%E6%B0%B4_%E7%99%BB%E9%8C%B2%E3%83%87%E3%83%BC%E3%82%BF%E4%B8%80%E8%A6%A7_2022%E5%B9%B410%E6%9C%8826%E6%97%A5_15%E6%99%8214%E5%88%86.csv",
            locale = locale(encoding = "cp932"))
 glimpse(df_hinanjyo)
+```
 
+## 3. データの操作・加工
+
+```{r}
 df_hinanjyo <- 
   select(df_hinanjyo,
          `市町村`, `タイトル`, `所在地`, `緯度`, `経度`, `分類`)
@@ -51,11 +69,22 @@ df_hinanjyo <-
 
 count(df_hinanjyo, city)
 count(df_hinanjyo, city, sort = TRUE)
+```
 
+## 4. 地図化
+
+```{r}
 sf_hinanjyo <- 
   st_as_sf(df_hinanjyo,
            coords = c("longitude", "latitude"),
            crs = 4326)
+```
 
+```{r}
 mapview(sf_hinanjyo)
-mapview(sf_hinanjyo, zcol = "city")
+# mapview(sf_hinanjyo, zcol = "city")
+```
+
+
+
+
