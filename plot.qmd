@@ -1,0 +1,56 @@
+---
+title: "グラフの作成"
+---
+
+数値や表形式でのデータ表現は、データの内容を示すのに使うことができます。
+一方でデータの量が多い場合やデータ間の比較が困難な場合があります。
+グラフによるデータの表現は、データの傾向や特徴を視覚的に示すのに適しています。
+
+ここでは、[独立行政法人統計センター](https://www.nstac.go.jp)が公開する[教育用標準データセット](https://www.nstac.go.jp/use/literacy/ssdse/)から、身近な統計データをグラフ上に可視化する例を示します。
+
+<!-- 四国４県の統計データをグラフで表現しましょう。 -->
+
+## データの用意
+
+[教育用標準データセット](https://www.nstac.go.jp/use/literacy/ssdse/)は、データサイエンス演習、統計教育などに活用されることを期待したデータとして[独立行政法人統計センター](https://www.nstac.go.jp)が公開しているものです。
+データにはいくつかの種類があり、都道府県・市区町村別の集計値、時系列別での値などがあります。
+
+
+## グラフ表現
+
+- 折れ線グラフ
+- 棒グラフ
+- （円グラフ）
+- 散布図
+- ヒストグラム
+- 箱ひげ図
+
+```{r}
+#| eval: false
+
+library(ggplot2)
+library(ggrepel)
+ggplot(df_ssdse_b_tiny_shikoku,
+       aes(as.character(`年度`), `出生数`, group = `都道府県`)) +
+  geom_line()
+ggplot(df_ssdse_b_tiny_shikoku,
+       aes(`年平均気温`, `降水量（年間）`)) +
+  geom_point()
+
+df_ssdse_b_tiny |> 
+  filter(`都道府県` == "徳島県") |> 
+  ggplot(aes(as.character(`年度`), `降水量（年間）`)) +
+  geom_bar(stat = "identity")
+
+# 積み上げ
+df_ssdse_b_tiny_shikoku |> 
+  filter(`年度` == 2019) |> 
+  select(`都道府県`, 
+         `幼稚園数`, `小学校数`, `中学校数`, `高等学校数`, `短期大学数`, `大学数`) |> 
+  tidyr::pivot_longer(cols = c(`幼稚園数`, `小学校数`, `中学校数`, `高等学校数`, `短期大学数`, `大学数`),
+                      names_to = "stage",
+                      values_to = "value") |> 
+  ggplot(aes(`都道府県`, value, group = stage, fill = stage)) +
+  geom_bar(stat = "identity", position = "stack")
+```
+

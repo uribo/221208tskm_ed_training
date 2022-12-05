@@ -1,0 +1,43 @@
+---
+title: "地図へのマッピング"
+---
+
+```{r}
+#| include: false
+library(readr)
+library(dplyr)
+library(here)
+```
+
+
+```{r}
+#| warning: false
+#| message: false
+library(sf) # 地理空間データの操作
+library(mapview) # 地図のインタラクティブな操作
+```
+
+```{r}
+#| include: false
+df_hinanjyo <- 
+  read_csv(
+    file = here("data-raw/tksm_shelter_for_flood.csv"),
+           locale = locale(encoding = "SHIFT-JIS")) |> 
+  select(`市町村`, `タイトル`, `所在地`, `緯度`, `経度`, `分類`) |> 
+  purrr::set_names(c("city", "title", "address", "latitude", "longitude", "type")) |> 
+  mutate(city = stringr::str_extract(address, "(.{2}郡.{2,3}町|.{2,3}(市|町|村))"))
+```
+
+
+```{r}
+sf_hinanjyo <- 
+  st_as_sf(df_hinanjyo,
+           coords = c("longitude", "latitude"),
+           crs = 4326)
+```
+
+```{r}
+mapview(sf_hinanjyo)
+# mapview(sf_hinanjyo, zcol = "city")
+```
+

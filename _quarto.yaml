@@ -8,16 +8,28 @@ website:
   repo-url: https://github.com/uribo/221208tskm_ed_training
   open-graph: false
   navbar:
-    background: primary
+    pinned: true
+    background: info
+    foreground: light
     left:
       - href: index.qmd
         text: Home
       - text: 研修内容
         menu:
+          - href: plot.html
+            text: "1. グラフの作成"
           - href: shelter.html
-            text: "1. 徳島県のオープンデータ"
+            text: "2. オープンデータの活用"
+          - href: mapping.html
+            text: "3. 地図へのマッピング"
+          - href: report.html
+            text: "4. 地域データの分析とレポート作成"
+    repo-url: http://github.com/uribo/221208tskm_ed_training
+    repo-actions: [issue]
 
 ascii: false
+callout-appearance: default
+callout-icon: true
 
 knitr:
   opts_chunk: 
@@ -31,4 +43,4 @@ format:
     toc: true
     code-fold: false
     code-summary: "コードを表示"
-    df-print: kable
+    df-print: tibble

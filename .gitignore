@@ -5,3 +5,4 @@
 README.html
 _site/
 /.quarto/
+data-raw/*.csv

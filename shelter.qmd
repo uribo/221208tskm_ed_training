@@ -1,16 +1,11 @@
 ---
-title: "研修資料"
-author: "瓜生真也"
-format: html
+title: "オープンデータの活用"
 ---
 
-```{r}
-library(rmarkdown)
-library(ragg)
-```
+オープンデータの取得から操作、可視化まで。
 
-徳島県オープンデータポータルサイトから[緊急避難場所 (徳島県)](https://opendata.pref.tokushima.lg.jp/dataset/487.html)のデータをRで読み込み、処理します。
-リンク先にはいくつかのデータがあります。ここでは「洪水_登録データ一覧_2022年10月26日.csv (CSV 121KB)」を例に解説を行います。
+[徳島県オープンデータポータルサイト](https://opendata.pref.tokushima.lg.jp)から[緊急避難場所 (徳島県)](https://opendata.pref.tokushima.lg.jp/dataset/487.html)のデータをRで読み込み、処理します。
+リンク先にはいくつかのデータがあります。ここでは「`洪水_登録データ一覧_2022年10月26日.csv (CSV 121KB)`」を例に解説を行います。
 
 ## 1. パッケージの読み込み
 
@@ -18,73 +13,288 @@ Rでは**パッケージ**と呼ばれる機能拡張をユーザーが自由に
 パッケージの導入により、Rで実現可能な枠が広がります。
 Rのインストール時に利用可能な、組み込みパッケージがありますが、これに加えていくつかのパッケージを導入しておくと、Rでの作業が快適になります。
 
+パッケージの読み込みは`library({パッケージ名})`の形式で行います。
+次のコードではいくつかのパッケージを読み込んでいます。
+各パッケージがどのような機能をもつか、コメントとして示しました。
+Rでは`#` 以降の文章はコメントとして扱われます。
+コメントは、後からコードを見返した際、どのような処理をなぜ行ったのかを理解するのに役立つため、必要に応じて書いておくことが望ましいです。
+
+
 ```{r}
+#| warning: false
+#| message: false
 library(readr) # 表形式データの読み込み
 library(dplyr) # データ操作
-library(sf) # 地理空間データの操作
 library(ggplot2) # データ可視化
-library(mapview) # 地図のインタラクティブな操作
+library(here) # ファイルの指定を容易にする
 ```
 
 ## 2. データの読み込み
 
+データをRへ読み込むには、次に示す通り、いくつかの方法があります。
+
+1. 対象ファイルを利用しているコンピュータのローカルディスクへ保存し、ファイルが置かれた場所（パス）を指定する
+2. インターネット上に置かれたファイルのURLを指定する
+3. RStudioのImport Dataset機能
+
+ここでは2の方法でデータを読み込みます。`read_csv()`関数のfile引数にデータのURLを指定しましょう。
+徳島県オープンデータポータルサイト、`洪水_登録データ一覧_2022年10月26日.csv`の欄にある`URLをコピー`をクリックします。
+コピーしたURLをfile引数に `file = "コピーしたURL"`の形式で記述します。URLを引用符 `"` で囲む必要がある点に注意してください。
+Rでは文字列を引用符で囲むルールが存在します。
+また、locale引数にもファイル読み込みのためのオプションを指定し、コードを実行します。
+
 ```{r}
+#| eval: false
+#| echo: true
+read_csv(
+    file = "コピーしたURL",
+    # 読み込みのオプション
+    # 日本語が使われる一部のファイルを読み込むと、文字化けをすることがあります。
+    # このファイルでも日本語が使われているため、次のオプションの指定で文字化けを回避します。
+    locale = locale(encoding = "SHIFT-JIS"))
+```
+
+```{r}
+#| include: false
+if (!fs::file_exists(here("data-raw/tksm_shelter_for_flood.csv"))) {
+  download.file("https://opendata.pref.tokushima.lg.jp/dataset/487/resource/6553/洪水_登録データ一覧_2022年10月26日_15時14分.csv",
+              here("data-raw/tksm_shelter_for_flood.csv"))
+}
+read_csv(here("data-raw/tksm_shelter_for_flood.csv"),
+         locale = locale(encoding = "SHIFT-JIS"))
+```
+
+Rでは処理の結果を再利用するために、オブジェクトを利用します。
+読み込んだデータに対して、処理を加えるためにオブジェクトとして保存しましょう。
+オブジェクトへの保存は「代入」とも呼ばれます。
+代入は `<-` （代入演算子）の左側に保存先のオブジェクト名、右側に保存したい処理内容を記述して実行します。
+
+
+```{r}
+#| eval: false
+#| echo: true
+# 読み込んだcsvの内容を df_hinanjyo として記録する
 df_hinanjyo <- 
-  read_csv(file = "https://opendata.pref.tokushima.lg.jp/dataset/487/resource/6553/%E6%B4%AA%E6%B0%B4_%E7%99%BB%E9%8C%B2%E3%83%87%E3%83%BC%E3%82%BF%E4%B8%80%E8%A6%A7_2022%E5%B9%B410%E6%9C%8826%E6%97%A5_15%E6%99%8214%E5%88%86.csv",
-           locale = locale(encoding = "cp932"))
+  read_csv(
+    file = "https://opendata.pref.tokushima.lg.jp/dataset/487/resource/6553/洪水_登録データ一覧_2022年10月26日_15時14分.csv",
+           locale = locale(encoding = "SHIFT-JIS"))
+```
+
+```{r}
+#| include: false
+df_hinanjyo <- 
+  read_csv(here("data-raw/tksm_shelter_for_flood.csv"),
+         locale = locale(encoding = "SHIFT-JIS"))
+```
+
+オブジェクトに保存した内容（値）はいつでも呼び出すことができます。
+
+```{r}
+#| eval: false
+#| echo: true
+# コンソールでオブジェクト名を実行すると値が呼び出される
+df_hinanjyo
+```
+
+読み込んだファイルのように、表形式で表現されるデータのことをRではデータフレームと呼びます。
+データフレームは表計算ソフトのように1行1列それぞれに値が格納されています。
+
+![洪水_登録データ一覧を表計算ソフトで表示した画面。Rでの読み込み結果が正しく行われていることを確認しましょう。](images/excel.png)
+
+上記のようにオブジェクト名をコンソールで実行してデータフレームを表示することもできますが、
+データフレームの中身を確認する関数はいくつかあります。
+
+```{r}
+#| eval: false
+#| echo: true
+View(df_hinanjyo)
+```
+
+```{r}
+# データ中の各変数の値を縦方向に出力します
 glimpse(df_hinanjyo)
 ```
 
+::: {.callout-note}
+
+インターネットが利用できない環境では、URLを指定したデータの読み込みが行えません。
+ローカルディスクにファイルをダウンロードしておくことで、インターネット非接続状態でもファイルの読み込みが可能になります。
+次のコマンドを実行するとファイルのダウンロード、ローカルでのパスを指定したファイルの読み込みが行われます。
+
+```{r}
+#| eval: false
+#| echo: true
+fs::dir_create(here("data-raw"))
+# インターネット上のファイルをダウンロードする（ここではインターネット接続が必要です）
+download.file("https://opendata.pref.tokushima.lg.jp/dataset/487/resource/6553/洪水_登録データ一覧_2022年10月26日_15時14分.csv",
+              # data-rawフォルダの中に tksm_shelter_for_flood.csv として保存します
+              here("data-raw/tksm_shelter_for_flood.csv"))
+
+# 保存したcsvファイルのパスをfile引数で指定します
+df_hinanjyo <- 
+  read_csv(
+    file = here("data-raw/tksm_shelter_for_flood.csv"),
+           locale = locale(encoding = "SHIFT-JIS"))
+```
+
+![ダウンロードしたファイルとフォルダの関係](images/donwload_file.png)
+
+:::
+
+::: {.callout-note}
+
+上記の処理はRStudioのFile import機能を使っても行えます。
+この機能には、データの読み込み結果をプレビューできる、Rのコード入力を最低限に抑えることができるなどの利点があります。
+
+![RStudioのImport dataset機能を使ったデータ読み込み](images/rstudio_import_dataset.png)
+:::
+
 ## 3. データの操作・加工
+
+<!-- データを読み込んだ後は 
+
+dplyrパッケージが提供する
+
+- select()
+- filter()
+- mutate()
+
+- arrange()
+- group_by(), summarise()
+
+-->
+
+データフレームを確認するとわかるように、このデータには複数の「写真」の列が存在します。
+これらの列の中には値がありません。
+値がない状態を「欠損」は呼ばれ、そのことを表現するために欠損値 (`NA`) が使われます。
+こうした欠損値からなる列は不要と判断し、列を絞り込みましょう。
+列の選択は`select()`関数で行います。この関数の引数に、残したい、または削除したい変数を記述して実行します[^1]。
+関心のある列にデータを制限することで、データの見通しがよくなります。
+
+[^1]: 列を削除するには、列名の前に`!`を付けて実行します。例) `select(df_hinanjyo, !c(`市町村`, `分類`))`
 
 ```{r}
 df_hinanjyo <- 
+  # 関心のある列を選び直す
   select(df_hinanjyo,
          `市町村`, `タイトル`, `所在地`, `緯度`, `経度`, `分類`)
 glimpse(df_hinanjyo)
+```
 
+加えて、日本語の列名から英語での列名に変更します。
+
+```{r}
 # 緯度 ... latitude
 # 経度 ... longitude
 colnames(df_hinanjyo) <- 
   c("city", "title", "address", "latitude", "longitude", "type")
 head(df_hinanjyo)
+```
 
-# cityが欠損値
+ここで`city`列に注目します。
+この列は避難所の位置する市町村を記録すべき列ですが、いずれの行にも値は含まれません。
+
+
+```{r}
+# cityの項目を数える --> NA (欠損値)
 count(df_hinanjyo, city)
+```
+
+```{r}
+#| eval: false
+#| echo: true
+# 欠損値の行を確認
 filter(df_hinanjyo, is.na(city))
+# 欠損値でない行を確認
 filter(df_hinanjyo, !is.na(city))
+```
 
+そこで避難所の住所を記録した`address`列の値から市町村名の部分だけを抜き出して、
+`city`列を上書きすることを考えましょう。
+`address`には`r df_hinanjyo$address[1]`のように住所が文字列として記録されています。
+
+```{r}
+# 1行目の住所を表示
 df_hinanjyo$address[1]
-df_hinanjyo$address
+# すべての住所を表示
+# df_hinanjyo$address
 
+# 県名を含む住所から市町村の部分を取り出す
+stringr::str_extract(df_hinanjyo$address[1], 
+                     pattern = "(.{2}郡.{2,3}町|.{2,3}(市|町|村))")
+```
+
+```{r}
+#| eval: false
+#| echo: true
 stringr::str_remove(df_hinanjyo$address[1], "徳島県")
 stringr::str_extract(df_hinanjyo$address[1], ".{2}郡.{2,3}町")
 x <- 
   which(is.na(stringr::str_extract(df_hinanjyo$address, "(.{2}郡.{2,3}町|.{2,3}(市|町|村))")))
 df_hinanjyo$address[x]
+```
 
+すべての行にこの処理を適用しましょう。
+`mutate()`関数を使って、任意の処理を各行へ適用可能です。
+
+```{r}
 df_hinanjyo <- 
   mutate(df_hinanjyo,
+         # 住所から市町村名の部分を取り出し、city列に格納する
          city = stringr::str_extract(address, "(.{2}郡.{2,3}町|.{2,3}(市|町|村))"))
+```
 
+結果を確認します。
+先ほど`count()`関数で`city`列の項目を数えた際には欠損値だけでしたが、
+今度は市町村のカウントが正しく行われているように見えます。
+
+```{r}
 count(df_hinanjyo, city)
-count(df_hinanjyo, city, sort = TRUE)
 ```
 
-## 4. 地図化
 
 ```{r}
-sf_hinanjyo <- 
-  st_as_sf(df_hinanjyo,
-           coords = c("longitude", "latitude"),
-           crs = 4326)
+# いくつかの行は欠損値のまま
+filter(df_hinanjyo, is.na(city))
+```
+
+## 4. グラフの作成
+
+```{r}
+df_city_count <- 
+  # sort = TRUE ... 市町村の項目が多い順（降順）に出力する
+  count(df_hinanjyo, city, sort = TRUE)
 ```
 
 ```{r}
-mapview(sf_hinanjyo)
-# mapview(sf_hinanjyo, zcol = "city")
+#| eval: false
+#| echo: true
+p <- 
+  ggplot(data = df_city_count,
+       aes(city, n)) +
+  geom_bar(stat = "identity",
+           fill = "#3F54B4")
+
+p
 ```
 
+```{r}
+#| eval: false
+#| echo: true
+p +
+  coord_flip()
+```
 
+```{r}
+#| eval: false
+#| echo: true
+p <- 
+  ggplot(data = df_city_count,
+       aes(forcats::fct_reorder(city, n), n)) +
+  geom_bar(stat = "identity",
+           fill = "#3F54B4") +
+  coord_flip()
 
+p
+```
 
