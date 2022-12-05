@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>高等学校情報科におけるR言語の活用</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "一致なし",
+    "search-matching-documents-text": "一致した文書",
+    "search-copy-link-title": "検索へのリンクをコピー",
+    "search-hide-matches-text": "追加の検索結果を非表示",
+    "search-more-match-text": "追加の検索結果",
+    "search-more-matches-text": "追加の検索結果",
+    "search-clear-button-title": "消去",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "検索"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">高等学校情報科におけるR言語の活用</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">研修内容</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
+        <li>
+    <a class="dropdown-item" href="./plot.html">
+ <span class="dropdown-text">1. グラフの作成</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./shelter.html">
+ <span class="dropdown-text">2. オープンデータの活用</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./mapping.html">
+ <span class="dropdown-text">3. 地図へのマッピング</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./report.html">
+ <span class="dropdown-text">4. 地域データの分析とレポート作成</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目次</h2>
+   
+  <ul>
+  <li><a href="#概要" id="toc-概要" class="nav-link active" data-scroll-target="#概要">概要</a>
+  <ul class="collapse">
+  <li><a href="#研修の進め方" id="toc-研修の進め方" class="nav-link" data-scroll-target="#研修の進め方">研修の進め方</a></li>
+  <li><a href="#講師" id="toc-講師" class="nav-link" data-scroll-target="#講師">講師</a></li>
+  <li><a href="#ライセンス" id="toc-ライセンス" class="nav-link" data-scroll-target="#ライセンス">ライセンス</a></li>
+  </ul></li>
+  <li><a href="#参考資料" id="toc-参考資料" class="nav-link" data-scroll-target="#参考資料">参考資料</a></li>
+  <li><a href="#研修の日程" id="toc-研修の日程" class="nav-link" data-scroll-target="#研修の日程">研修の日程</a></li>
+  <li><a href="#内容に関する質問指摘" id="toc-内容に関する質問指摘" class="nav-link" data-scroll-target="#内容に関する質問指摘">内容に関する質問、指摘</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">高等学校情報科におけるR言語の活用</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="概要" class="level2">
+<h2 class="anchored" data-anchor-id="概要">概要</h2>
+<p>このページは、令和4年度（2022年度）徳島県教科「情報」指導者研修のための資料です。 R言語によるプログラミングを通し、教科「情報」で扱われるいくつかの単元の内容を学びます。 具体的には、「プログラミング」、「<a href="plot.html">データの可視化</a>」、「<a href="shelter.html">オープンデータの活用</a>」を扱います。 またQuartoを使った<a href="report.html">レポート作成の方法</a>についても解説します。</p>
+<section id="研修の進め方" class="level3">
+<h3 class="anchored" data-anchor-id="研修の進め方">研修の進め方</h3>
+<p>研修内容はこのウェブページ上またはスライド（公開準備中）から閲覧可能です。 研修を通して<a href="https://cran.r-project.org">R言語</a>によるプログラミングを行います。</p>
+<p>R言語の実行環境は各自のコンピュータ上に構築していただくことが望ましいですが、 当日の研修ではbinderを利用します。binderはウェブブラウザ上で実行可能なRの環境を提供します。以下のボタンをクリックまたはURLから直接リンクいただくことでbinderが起動します。 そのまましばらく待つとRStudio (Server)の画面に切り替わるので、そこからRを操作します。</p>
+<p>この研修では、R言語についての詳しい解説をしませんが、代わりに<a href="#参考資料">参考資料</a>を掲載します。Rの操作で不明な点に遭遇した、詳しくRを知りたい場合に適宜参考にしてください。</p>
+</section>
+<section id="講師" class="level3">
+<h3 class="anchored" data-anchor-id="講師">講師</h3>
+<ul>
+<li><a href="http://github.com/uribo">瓜生真也</a> - <a href="https://www.tokushima-u.ac.jp/ai/">徳島大学デザイン型AI教育研究センター</a>・助教</li>
+</ul>
+</section>
+<section id="ライセンス" class="level3">
+<h3 class="anchored" data-anchor-id="ライセンス">ライセンス</h3>
+<p>この資料は<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ja">クリエイティブ・コモンズ 表示 - 非営利 - 継承 4.0 国際 (CC BY-NC-SA 4.0) ライセンス</a>の下に提供しています。ただし、資料中のコード部分は<a href="https://opensource.org/licenses/MIT">MITライセンス</a>の下に提供します。</p>
+<p>本資料では次のオープンデータを利用します。</p>
+<ul>
+<li>SSDSE-県別推移 https://www.nstac.go.jp/use/literacy/ssdse/ 独立行政法人統計センター</li>
+<li>緊急避難場所 (徳島県) https://opendata.pref.tokushima.lg.jp/dataset/487.html 徳島県オープンデータポータルサイト - クリエイティブ・コモンズ 表示 4.0 国際</li>
+</ul>
+<p>資料の中で利用するにはそれぞれライセンスが付与されています。 利用の際は別途ライセンスを確認してください。</p>
+</section>
+</section>
+<section id="参考資料" class="level2">
+<h2 class="anchored" data-anchor-id="参考資料">参考資料</h2>
+<ul>
+<li>馬場真哉 (2019). 「R言語ではじめるプログラミングとデータ分析」ソシム ISBN: 978-4-8026-1238-8</li>
+<li>松村優哉、湯谷啓明、紀ノ定保礼、前田和寛 (2021). 「RユーザのためのRStudio[実践]入門」技術評論社 ISBN: 978-4-297-12170-9</li>
+<li>Hadley Wickham、Garrett Grolemund 著、黒川利明 訳、大橋真也 技術監修 (2017). 「Rではじめるデータサイエンス（R for Data Science）」オライリー・ジャパン ISBN: 978-4-87311-814-7 https://r4ds.had.co.nz</li>
+<li>石田基広 (2012). 「Rで学ぶデータ・プログラミング入門: RStudioを活用する」共立出版 ISBN: 978-4-320-11029-8</li>
+<li>Jaehyun Song、Yuki Yanai. 「私たちのR: ベストプラクティスの探究 」 https://www.jaysong.net/RBook/</li>
+<li><a href="https://speakerdeck.com/s_uryu/introduction-to-r">R言語入門</a></li>
+</ul>
+</section>
+<section id="研修の日程" class="level2">
+<h2 class="anchored" data-anchor-id="研修の日程">研修の日程</h2>
+<p>2022-12-08@online</p>
+</section>
+<section id="内容に関する質問指摘" class="level2">
+<h2 class="anchored" data-anchor-id="内容に関する質問指摘">内容に関する質問、指摘</h2>
+<p>改善のためにコメント等をいただけると幸いです。 コメントは<a href="https://github.com/uribo/221208tskm_ed_training/issues/new">GitHub issues</a>から投稿をお願いします。</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "コピーしました");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "コピーしました");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

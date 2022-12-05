@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>高等学校情報科におけるR言語の活用 - オープンデータの活用</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "一致なし",
+    "search-matching-documents-text": "一致した文書",
+    "search-copy-link-title": "検索へのリンクをコピー",
+    "search-hide-matches-text": "追加の検索結果を非表示",
+    "search-more-match-text": "追加の検索結果",
+    "search-more-matches-text": "追加の検索結果",
+    "search-clear-button-title": "消去",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "検索"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">高等学校情報科におけるR言語の活用</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">研修内容</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-">    
+        <li>
+    <a class="dropdown-item" href="./plot.html">
+ <span class="dropdown-text">1. グラフの作成</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./shelter.html">
+ <span class="dropdown-text">2. オープンデータの活用</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./mapping.html">
+ <span class="dropdown-text">3. 地図へのマッピング</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./report.html">
+ <span class="dropdown-text">4. 地域データの分析とレポート作成</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目次</h2>
+   
+  <ul>
+  <li><a href="#パッケージの読み込み" id="toc-パッケージの読み込み" class="nav-link active" data-scroll-target="#パッケージの読み込み">1. パッケージの読み込み</a></li>
+  <li><a href="#データの読み込み" id="toc-データの読み込み" class="nav-link" data-scroll-target="#データの読み込み">2. データの読み込み</a></li>
+  <li><a href="#データの操作加工" id="toc-データの操作加工" class="nav-link" data-scroll-target="#データの操作加工">3. データの操作・加工</a></li>
+  <li><a href="#グラフの作成" id="toc-グラフの作成" class="nav-link" data-scroll-target="#グラフの作成">4. グラフの作成</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">オープンデータの活用</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>オープンデータの取得から操作、可視化まで。</p>
+<p><a href="https://opendata.pref.tokushima.lg.jp">徳島県オープンデータポータルサイト</a>から<a href="https://opendata.pref.tokushima.lg.jp/dataset/487.html">緊急避難場所 (徳島県)</a>のデータをRで読み込み、処理します。 リンク先にはいくつかのデータがあります。ここでは「<code>洪水_登録データ一覧_2022年10月26日.csv (CSV 121KB)</code>」を例に解説を行います。</p>
+<section id="パッケージの読み込み" class="level2">
+<h2 class="anchored" data-anchor-id="パッケージの読み込み">1. パッケージの読み込み</h2>
+<p>Rでは<strong>パッケージ</strong>と呼ばれる機能拡張をユーザーが自由に導入することが可能です。 パッケージの導入により、Rで実現可能な枠が広がります。 Rのインストール時に利用可能な、組み込みパッケージがありますが、これに加えていくつかのパッケージを導入しておくと、Rでの作業が快適になります。</p>
+<p>パッケージの読み込みは<code>library({パッケージ名})</code>の形式で行います。 次のコードではいくつかのパッケージを読み込んでいます。 各パッケージがどのような機能をもつか、コメントとして示しました。 Rでは<code>#</code> 以降の文章はコメントとして扱われます。 コメントは、後からコードを見返した際、どのような処理をなぜ行ったのかを理解するのに役立つため、必要に応じて書いておくことが望ましいです。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr) <span class="co"># 表形式データの読み込み</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr) <span class="co"># データ操作</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2) <span class="co"># データ可視化</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here) <span class="co"># ファイルの指定を容易にする</span></span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="データの読み込み" class="level2">
+<h2 class="anchored" data-anchor-id="データの読み込み">2. データの読み込み</h2>
+<p>データをRへ読み込むには、次に示す通り、いくつかの方法があります。</p>
+<ol type="1">
+<li>対象ファイルを利用しているコンピュータのローカルディスクへ保存し、ファイルが置かれた場所（パス）を指定する</li>
+<li>インターネット上に置かれたファイルのURLを指定する</li>
+<li>RStudioのImport Dataset機能</li>
+</ol>
+<p>ここでは2の方法でデータを読み込みます。<code>read_csv()</code>関数のfile引数にデータのURLを指定しましょう。 徳島県オープンデータポータルサイト、<code>洪水_登録データ一覧_2022年10月26日.csv</code>の欄にある<code>URLをコピー</code>をクリックします。 コピーしたURLをfile引数に <code>file = "コピーしたURL"</code>の形式で記述します。URLを引用符 <code>"</code> で囲む必要がある点に注意してください。 Rでは文字列を引用符で囲むルールが存在します。 また、locale引数にもファイル読み込みのためのオプションを指定し、コードを実行します。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">read_csv</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">file =</span> <span class="st">"コピーしたURL"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 読み込みのオプション</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 日本語が使われる一部のファイルを読み込むと、文字化けをすることがあります。</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># このファイルでも日本語が使われているため、次のオプションの指定で文字化けを回避します。</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">encoding =</span> <span class="st">"SHIFT-JIS"</span>))</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Rでは処理の結果を再利用するために、オブジェクトを利用します。 読み込んだデータに対して、処理を加えるためにオブジェクトとして保存しましょう。 オブジェクトへの保存は「代入」とも呼ばれます。 代入は <code>&lt;-</code> （代入演算子）の左側に保存先のオブジェクト名、右側に保存したい処理内容を記述して実行します。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 読み込んだcsvの内容を df_hinanjyo として記録する</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df_hinanjyo <span class="ot">&lt;-</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_csv</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">file =</span> <span class="st">"https://opendata.pref.tokushima.lg.jp/dataset/487/resource/6553/洪水_登録データ一覧_2022年10月26日_15時14分.csv"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">encoding =</span> <span class="st">"SHIFT-JIS"</span>))</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>オブジェクトに保存した内容（値）はいつでも呼び出すことができます。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># コンソールでオブジェクト名を実行すると値が呼び出される</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df_hinanjyo</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>読み込んだファイルのように、表形式で表現されるデータのことをRではデータフレームと呼びます。 データフレームは表計算ソフトのように1行1列それぞれに値が格納されています。</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/excel.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">洪水_登録データ一覧を表計算ソフトで表示した画面。Rでの読み込み結果が正しく行われていることを確認しましょう。</figcaption><p></p>
+</figure>
+</div>
+<p>上記のようにオブジェクト名をコンソールで実行してデータフレームを表示することもできますが、 データフレームの中身を確認する関数はいくつかあります。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(df_hinanjyo)</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># データ中の各変数の値を縦方向に出力します</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(df_hinanjyo)</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 701
+Columns: 19
+$ 市町村   &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ タイトル &lt;chr&gt; "板野町防災ステーション", "新野小学校", "新野東小学校", "阿南…
+$ 所在地   &lt;chr&gt; "徳島県板野郡板野町川端字新手崎18-1", "阿南市新野町南宮ノ久保…
+$ 緯度     &lt;dbl&gt; 34.13761, 33.84699, 33.84517, 33.87679, 33.87358, 33.87303, 3…
+$ 経度     &lt;dbl&gt; 134.4729, 134.5811, 134.6042, 134.6283, 134.6118, 134.5819, 1…
+$ 写真1    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ 写真2    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ 写真3    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ 写真4    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ 写真5    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ 写真6    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ 写真7    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ 写真8    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ 写真9    &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ 写真10   &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ 連絡先   &lt;chr&gt; "088-637-5585", "0884-36-2021", "0884-36-2103", "0884-26-0203…
+$ 分類     &lt;chr&gt; "指定緊急避難場所（法指定）", "指定緊急避難場所（法指定）", "…
+$ 災害種別 &lt;chr&gt; "洪水,崖崩れ等,地震,大規模な火事,内水氾濫", "洪水,崖崩れ等,地…
+$ 備考     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…</code></pre>
+</div>
+</div>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+ノート
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>インターネットが利用できない環境では、URLを指定したデータの読み込みが行えません。 ローカルディスクにファイルをダウンロードしておくことで、インターネット非接続状態でもファイルの読み込みが可能になります。 次のコマンドを実行するとファイルのダウンロード、ローカルでのパスを指定したファイルの読み込みが行われます。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fs<span class="sc">::</span><span class="fu">dir_create</span>(<span class="fu">here</span>(<span class="st">"data-raw"</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># インターネット上のファイルをダウンロードする（ここではインターネット接続が必要です）</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(<span class="st">"https://opendata.pref.tokushima.lg.jp/dataset/487/resource/6553/洪水_登録データ一覧_2022年10月26日_15時14分.csv"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>              <span class="co"># data-rawフォルダの中に tksm_shelter_for_flood.csv として保存します</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>              <span class="fu">here</span>(<span class="st">"data-raw/tksm_shelter_for_flood.csv"</span>))</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 保存したcsvファイルのパスをfile引数で指定します</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>df_hinanjyo <span class="ot">&lt;-</span> </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_csv</span>(</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">file =</span> <span class="fu">here</span>(<span class="st">"data-raw/tksm_shelter_for_flood.csv"</span>),</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">encoding =</span> <span class="st">"SHIFT-JIS"</span>))</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/donwload_file.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">ダウンロードしたファイルとフォルダの関係</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+ノート
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>上記の処理はRStudioのFile import機能を使っても行えます。 この機能には、データの読み込み結果をプレビューできる、Rのコード入力を最低限に抑えることができるなどの利点があります。</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/rstudio_import_dataset.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">RStudioのImport dataset機能を使ったデータ読み込み</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="データの操作加工" class="level2">
+<h2 class="anchored" data-anchor-id="データの操作加工">3. データの操作・加工</h2>
+<!-- データを読み込んだ後は 
+
+dplyrパッケージが提供する
+
+- select()
+- filter()
+- mutate()
+
+- arrange()
+- group_by(), summarise()
+
+-->
+<p>データフレームを確認するとわかるように、このデータには複数の「写真」の列が存在します。 これらの列の中には値がありません。 値がない状態を「欠損」は呼ばれ、そのことを表現するために欠損値 (<code>NA</code>) が使われます。 こうした欠損値からなる列は不要と判断し、列を絞り込みましょう。 列の選択は<code>select()</code>関数で行います。この関数の引数に、残したい、または削除したい変数を記述して実行します<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。 関心のある列にデータを制限することで、データの見通しがよくなります。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df_hinanjyo <span class="ot">&lt;-</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 関心のある列を選び直す</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(df_hinanjyo,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">市町村</span><span class="st">`</span>, <span class="st">`</span><span class="at">タイトル</span><span class="st">`</span>, <span class="st">`</span><span class="at">所在地</span><span class="st">`</span>, <span class="st">`</span><span class="at">緯度</span><span class="st">`</span>, <span class="st">`</span><span class="at">経度</span><span class="st">`</span>, <span class="st">`</span><span class="at">分類</span><span class="st">`</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(df_hinanjyo)</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 701
+Columns: 6
+$ 市町村   &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ タイトル &lt;chr&gt; "板野町防災ステーション", "新野小学校", "新野東小学校", "阿南…
+$ 所在地   &lt;chr&gt; "徳島県板野郡板野町川端字新手崎18-1", "阿南市新野町南宮ノ久保…
+$ 緯度     &lt;dbl&gt; 34.13761, 33.84699, 33.84517, 33.87679, 33.87358, 33.87303, 3…
+$ 経度     &lt;dbl&gt; 134.4729, 134.5811, 134.6042, 134.6283, 134.6118, 134.5819, 1…
+$ 分類     &lt;chr&gt; "指定緊急避難場所（法指定）", "指定緊急避難場所（法指定）", "…</code></pre>
+</div>
+</div>
+<p>加えて、日本語の列名から英語での列名に変更します。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 緯度 ... latitude</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 経度 ... longitude</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(df_hinanjyo) <span class="ot">&lt;-</span> </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="st">"city"</span>, <span class="st">"title"</span>, <span class="st">"address"</span>, <span class="st">"latitude"</span>, <span class="st">"longitude"</span>, <span class="st">"type"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df_hinanjyo)</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  city  title                  address                     latit…¹ longi…² type 
+  &lt;lgl&gt; &lt;chr&gt;                  &lt;chr&gt;                         &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;
+1 NA    板野町防災ステーション 徳島県板野郡板野町川端字新…    34.1    134. 指定…
+2 NA    新野小学校             阿南市新野町南宮ノ久保70-1     33.8    135. 指定…
+3 NA    新野東小学校           阿南市新野町是国37-2           33.8    135. 指定…
+4 NA    阿南第二中学校         阿南市内原町竹ノ内口143-1      33.9    135. 指定…
+5 NA    桑野小学校             阿南市桑野町岡元40-1           33.9    135. 指定…
+6 NA    山口小学校             阿南市山口町末広12-1           33.9    135. 指定…
+# … with abbreviated variable names ¹​latitude, ²​longitude</code></pre>
+</div>
+</div>
+<p>ここで<code>city</code>列に注目します。 この列は避難所の位置する市町村を記録すべき列ですが、いずれの行にも値は含まれません。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cityの項目を数える --&gt; NA (欠損値)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">count</span>(df_hinanjyo, city)</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 2
+  city      n
+  &lt;lgl&gt; &lt;int&gt;
+1 NA      701</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 欠損値の行を確認</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(df_hinanjyo, <span class="fu">is.na</span>(city))</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 欠損値でない行を確認</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(df_hinanjyo, <span class="sc">!</span><span class="fu">is.na</span>(city))</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>そこで避難所の住所を記録した<code>address</code>列の値から市町村名の部分だけを抜き出して、 <code>city</code>列を上書きすることを考えましょう。 <code>address</code>には徳島県板野郡板野町川端字新手崎18-1のように住所が文字列として記録されています。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1行目の住所を表示</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>df_hinanjyo<span class="sc">$</span>address[<span class="dv">1</span>]</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "徳島県板野郡板野町川端字新手崎18-1"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># すべての住所を表示</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># df_hinanjyo$address</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 県名を含む住所から市町村の部分を取り出す</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>stringr<span class="sc">::</span><span class="fu">str_extract</span>(df_hinanjyo<span class="sc">$</span>address[<span class="dv">1</span>], </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">pattern =</span> <span class="st">"(.{2}郡.{2,3}町|.{2,3}(市|町|村))"</span>)</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "板野郡板野町"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>stringr<span class="sc">::</span><span class="fu">str_remove</span>(df_hinanjyo<span class="sc">$</span>address[<span class="dv">1</span>], <span class="st">"徳島県"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>stringr<span class="sc">::</span><span class="fu">str_extract</span>(df_hinanjyo<span class="sc">$</span>address[<span class="dv">1</span>], <span class="st">".{2}郡.{2,3}町"</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">which</span>(<span class="fu">is.na</span>(stringr<span class="sc">::</span><span class="fu">str_extract</span>(df_hinanjyo<span class="sc">$</span>address, <span class="st">"(.{2}郡.{2,3}町|.{2,3}(市|町|村))"</span>)))</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>df_hinanjyo<span class="sc">$</span>address[x]</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>すべての行にこの処理を適用しましょう。 <code>mutate()</code>関数を使って、任意の処理を各行へ適用可能です。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>df_hinanjyo <span class="ot">&lt;-</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(df_hinanjyo,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>         <span class="co"># 住所から市町村名の部分を取り出し、city列に格納する</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">city =</span> stringr<span class="sc">::</span><span class="fu">str_extract</span>(address, <span class="st">"(.{2}郡.{2,3}町|.{2,3}(市|町|村))"</span>))</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>結果を確認します。 先ほど<code>count()</code>関数で<code>city</code>列の項目を数えた際には欠損値だけでしたが、 今度は市町村のカウントが正しく行われているように見えます。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">count</span>(df_hinanjyo, city)</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 46 × 2
+   city         n
+   &lt;chr&gt;    &lt;int&gt;
+ 1 みよし町    10
+ 2 三好市     190
+ 3 上勝町       5
+ 4 上板町      11
+ 5 中田町       2
+ 6 中郷町       2
+ 7 光字白村     1
+ 8 勝浦町      34
+ 9 北島町      15
+10 吉野川市    18
+# … with 36 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># いくつかの行は欠損値のまま</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(df_hinanjyo, <span class="fu">is.na</span>(city))</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 75 × 6
+   city  title            address                  latitude longitude type     
+   &lt;chr&gt; &lt;chr&gt;            &lt;chr&gt;                       &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;    
+ 1 &lt;NA&gt;  明谷小学校       一宇字大屋内４３０４番地     33.9      134. 指定緊急…
+ 2 &lt;NA&gt;  平地区集会所     一宇字平３６９１番地１       33.9      134. 指定緊急…
+ 3 &lt;NA&gt;  葛籠地区集会所   一宇字葛籠６３０８番地       33.9      134. 指定緊急…
+ 4 &lt;NA&gt;  錦谷小学校       一宇字川又９５５番地１       33.9      134. 指定緊急…
+ 5 &lt;NA&gt;  河内地区集会所   一宇字大佐古６７０番地１     33.9      134. 指定緊急…
+ 6 &lt;NA&gt;  大野地区集会所   一宇字大野２２２番地         33.9      134. 指定緊急…
+ 7 &lt;NA&gt;  須貝瀬集会所     一宇字久藪２８８番地         33.9      134. 指定緊急…
+ 8 &lt;NA&gt;  伊良原地区集会所 一宇字伊良原１２３番地       33.9      134. 指定緊急…
+ 9 &lt;NA&gt;  久藪地区集会所   一宇字久藪２０５番地３       33.9      134. 指定緊急…
+10 &lt;NA&gt;  一宇公民館       一宇字赤松６番地２           34.0      134. 指定緊急…
+# … with 65 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="グラフの作成" class="level2">
+<h2 class="anchored" data-anchor-id="グラフの作成">4. グラフの作成</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>df_city_count <span class="ot">&lt;-</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># sort = TRUE ... 市町村の項目が多い順（降順）に出力する</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(df_hinanjyo, city, <span class="at">sort =</span> <span class="cn">TRUE</span>)</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">data =</span> df_city_count,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(city, n)) <span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> <span class="st">"#3F54B4"</span>)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">data =</span> df_city_count,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(forcats<span class="sc">::</span><span class="fu">fct_reorder</span>(city, n), n)) <span class="sc">+</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> <span class="st">"#3F54B4"</span>) <span class="sc">+</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">脚注</h2>
+
+<ol>
+<li id="fn1"><p>列を削除するには、列名の前に<code>!</code>を付けて実行します。例) <code>select(df_hinanjyo, !c(</code>市町村<code>,</code>分類<code>))</code><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "コピーしました");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "コピーしました");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
