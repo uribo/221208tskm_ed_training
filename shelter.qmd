@@ -246,10 +246,14 @@ df_hinanjyo <-
 
 結果を確認します。
 先ほど`count()`関数で`city`列の項目を数えた際には欠損値だけでしたが、
-今度は市町村のカウントが正しく行われているように見えます。
+今度は市町村別の避難場所のカウントが正しく行われているように見えます。
 
 ```{r}
-count(df_hinanjyo, city)
+df_city_count <- 
+  # sort = TRUE ... 市町村の項目が多い順（降順）に出力する
+  count(df_hinanjyo, city, sort = TRUE)
+
+df_city_count
 ```
 
 
@@ -260,41 +264,72 @@ filter(df_hinanjyo, is.na(city))
 
 ## 4. グラフの作成
 
-```{r}
-df_city_count <- 
-  # sort = TRUE ... 市町村の項目が多い順（降順）に出力する
-  count(df_hinanjyo, city, sort = TRUE)
-```
+続いて、市町村別に避難場所の数を集計したデータ `df_city_count` をもとに、簡単なグラフを作成してみましょう。
+
+避難場所の数（数量）を市町村で比較する際、適したグラフの種類は何でしょうか。
+ここでは棒グラフと円グラフによるグラフ作成の例を示します。
 
 ```{r}
-#| eval: false
+#| eval: true
 #| echo: true
+#| fig-cap: 徳島県内緊急避難場所（災害種別 洪水）の市町村別件数
+#| label: shelter_count
 p <- 
   ggplot(data = df_city_count,
        aes(city, n)) +
-  geom_bar(stat = "identity",
-           fill = "#3F54B4")
+  # 棒グラフの指定
+  geom_bar(
+    stat = "identity", # n （市町村別の避難場所の数）が棒の高さに用いられる
+    fill = "#3F54B4" # 棒の塗りつぶしの色
+  )
 
 p
 ```
 
+`geom_bar()`関数を指定して棒グラフを描画しましたが、このグラフはいくつかの理由で情報を適切に伝えられていません。
+例えば、
+
+1. x軸の市町村の間隔が狭いために文字が潰れてしまっている
+2. x軸の市町村の並びと避難場所の件数に関係がなく、関係を読み取りにくい
+
+この問題を改善してみましょう。
+まず、1の問題はx軸に複数の項目を並べる際に生じる問題です。
+特に項目数が多い場合、横幅を広くとらないと文字が潰れてしまいます。
+根本的な対策は、x軸とy軸を入れ替えて表示することです。
+これにより、項目の間隔を気にする必要がなくなります（ただし高さを十分にする）。
+すでに作成したグラフに対して、`coord_flip()`関数を適用するとx軸とy軸の入れ替えが行われます。
+
 ```{r}
-#| eval: false
+#| eval: true
 #| echo: true
+#| fig-cap: 徳島県内緊急避難場所（災害種別 洪水）の市町村別件数（市町村別の並びを縦に変更）
+#| label: shelter_count_coord_flip
+#| fig-height: 6
 p +
   coord_flip()
 ```
 
+続いて市町村名と避難場所の件数の関係をわかりやすく伝える工夫をしてみます。
+現在の図は適当に市町村名が並んでいるように見えるため、避難場所の件数で入れ替えるようにします。
+合わせてグラフ全体の見た目も調整しておきましょう。
+
 ```{r}
-#| eval: false
+#| eval: true
 #| echo: true
+#| fig-cap: 徳島県内緊急避難場所（災害種別 洪水）の市町村別件数
+#| label: shelter_count_coord_modify
+#| fig-height: 6
 p <- 
   ggplot(data = df_city_count,
        aes(forcats::fct_reorder(city, n), n)) +
   geom_bar(stat = "identity",
            fill = "#3F54B4") +
-  coord_flip()
+  coord_flip() +
+  xlab(NULL) +
+  ylab("避難場所の件数") +
+  labs(title = "徳島県内緊急避難場所（災害種別 洪水）の市町村別件数")
 
 p
 ```
 
+## まとめ
