@@ -9,13 +9,18 @@ library(dplyr)
 library(here)
 ```
 
-
 ```{r}
 #| warning: false
 #| message: false
 library(sf) # 地理空間データの操作
 library(mapview) # 地図のインタラクティブな操作
+library(ggplot2) # データ可視化
 ```
+
+[オープンデータの活用](shelter.html)の中で取り上げた「緊急避難場所 (徳島県)」を再び利用します。
+このデータは県内の市町村が指定する洪水災害発生時に利用可能な施設に関しての位置情報を記録したものでした。
+このデータに含まれる位置情報（緯度、経度）をもとに、Rで地図を作成してみます。
+
 
 ```{r}
 #| include: false
@@ -28,16 +33,35 @@ df_hinanjyo <-
   mutate(city = stringr::str_extract(address, "(.{2}郡.{2,3}町|.{2,3}(市|町|村))"))
 ```
 
+`st_as_sf()`関数を使って、データフレーム中の緯度 `latitude`と経度 `longitude`の列の値をもとに地理空間情報データ（ポイント）に変換します。
 
 ```{r}
+# 緯度経度の座標からポイントデータを生成
 sf_hinanjyo <- 
   st_as_sf(df_hinanjyo,
            coords = c("longitude", "latitude"),
            crs = 4326)
 ```
 
+避難場所の位置を地図上で確認します。
+
+mapviewパッケージはインタラクティブに操作できる地図機能を提供します。
+
 ```{r}
 mapview(sf_hinanjyo)
+# 市町村別の塗り分け
 # mapview(sf_hinanjyo, zcol = "city")
+```
+
+静的な地図はggplot2パッケージの`geom_sf()`関数により生成可能です。
+
+```{r}
+#| eval: false
+#| echo: true
+ggplot() +
+  geom_sf(data = sf_hinanjyo,
+          aes(color = city),
+          show.legend = FALSE)+
+  coord_sf()
 ```
 
