@@ -15,7 +15,13 @@ library(here)
 library(sf) # 地理空間データの操作
 library(mapview) # 地図のインタラクティブな操作
 library(ggplot2) # データ可視化
+library(rnaturalearth)
+library(rnaturalearthhires)
 ```
+
+## 地図データの操作
+
+## インタラクティブな地図の操作
 
 [オープンデータの活用](shelter.html)の中で取り上げた「緊急避難場所 (徳島県)」を再び利用します。
 このデータは県内の市町村が指定する洪水災害発生時に利用可能な施設に関しての位置情報を記録したものでした。
@@ -46,6 +52,7 @@ sf_hinanjyo <-
 避難場所の位置を地図上で確認します。
 
 mapviewパッケージはインタラクティブに操作できる地図機能を提供します。
+以下に出力される地図を操作（移動、拡大・縮小、レイヤの変更、アイコンのクリック）をしてみましょう。
 
 ```{r}
 mapview(sf_hinanjyo)
@@ -53,15 +60,48 @@ mapview(sf_hinanjyo)
 # mapview(sf_hinanjyo, zcol = "city")
 ```
 
+<!-- https://maps.pref.tokushima.lg.jp/hinansyotou/ -->
+
+## 静的な地図の描画とレイヤの重ね合わせ
+
 静的な地図はggplot2パッケージの`geom_sf()`関数により生成可能です。
 
 ```{r}
-#| eval: false
-#| echo: true
+#| label: tokushima-shelter-location
+#| fig-cap: 徳島県緊急避難場所の位置
 ggplot() +
+  geom_sf(data = sf_hinanjyo,
+          aes(color = city),
+          show.legend = FALSE)+
+  coord_sf() +
+  labs(title = "徳島県緊急避難場所の位置")
+```
+
+この図に徳島県の行政区域を重ね合わせ、緊急避難場所の位置をわかりやすく示してみます。
+rnaturalearthパッケージはパブリックドメインで使用できるポリゴンデータを提供します。
+次のコマンドで四国４県のポリゴンデータを用意します。
+
+```{r}
+# rnaturalearthから四国のポリゴンを準備する
+ne_jpn_shikoku <- 
+  rnaturalearth::ne_states(country = "Japan", returnclass = "sf") |> 
+  filter(region == "Shikoku") |> 
+  select(iso_3166_2, name)
+
+ne_jpn_shikoku
+```
+
+```{r}
+#| eval: false
+
+ggplot() +
+  geom_sf(data = filter(ne_jpn_shikoku, name == "Tokushima")) +
   geom_sf(data = sf_hinanjyo,
           aes(color = city),
           show.legend = FALSE)+
   coord_sf()
 ```
 
+このほか、行政区域のデータには[国土数値情報ダウンロードサービス](https://nlftp.mlit.go.jp/ksj/)の[`行政区域データ`](https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_1.html)などが利用できます。
+
+## まとめ
