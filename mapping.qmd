@@ -152,4 +152,69 @@ st_distance(
 st_centroid(ne_jpn_shikoku)
 ```
 
+sfパッケージで求めた値は、dplyrパッケージの`mutate()`関数と組み合わせることでデータフレームの列として格納できます。
+
+```{r}
+mutate(ne_jpn_shikoku,
+       area = units::set_units(st_area(ne_jpn_shikoku), km^2))
+```
+
+応用例として、[徳島県立総合教育センター](https://www.tokushima-ec.ed.jp)(板野郡板野町犬伏字東谷1-7)から半径1km圏内にある避難場所を特定します。
+まずは徳島県立総合教育センターの座標を`st_point()`関数内で定義し、ポイントデータを作成します。
+
+```{r}
+x <- 
+  # 徳島県立総合教育センターの位置
+  st_sfc(st_point(c(134.452485, 34.150387)), 
+         # 座標参照系の指定
+         crs = 4326)
+
+# 位置を確認
+mapview(x, map.types = "OpenStreetMap")
+```
+
+次に`st_buffer()`関数でポイントからバッファを生成します。
+ここで引数distにバッファの大きさを与えて実行します。
+今回は半径1kmのバッファとしたいので、`units::set_units(1, km)`を与えます。
+
+```{r}
+x_buffer1km <- 
+  st_buffer(x,
+            dist = units::set_units(1, km))
+
+mapview(x_buffer1km, map.types = "OpenStreetMap")
+```
+
+```{r}
+sf_hinanjyo_neighborhood <- 
+  st_join(
+  sf_hinanjyo,
+  st_sf(x_buffer1km),
+  left = FALSE)
+
+sf_hinanjyo_neighborhood
+```
+
+`r nrow(sf_hinanjyo_neighborhood)`地点の避難場所が示されました。
+これらの避難場所と徳島県立総合教育センターの距離を`st_dist()`関数で求めます。
+
+```{r}
+sf_hinanjyo_neighborhood <-
+  mutate(sf_hinanjyo_neighborhood,
+       distance = st_distance(geometry, x, by_element = FALSE))
+```
+
+最後に、避難場所の位置関係も確認しておきましょう。
+mapviewパッケージではggplot2パッケージのように描画対象のオブジェクトを`+`演算子を使って
+レイヤとして重ねられます。
+
+```{r}
+mapview(x_buffer1km) +
+  mapview(sf_hinanjyo_neighborhood,
+          zcol = "distance")
+```
+
+大きなバッファの内側に対象の`r nrow(sf_hinanjyo_neighborhood)`地点の避難場所が含まれることが確認できました。
+
+
 ## 5. まとめ
