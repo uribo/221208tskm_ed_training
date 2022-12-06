@@ -129,21 +129,21 @@
     "objectID": "mapping.html#地図の作成",
     "href": "mapping.html#地図の作成",
     "title": "地図へのマッピング",
-    "section": "2. 地図の作成",
-    "text": "2. 地図の作成\nRでの地理空間データの可視化表現として、インタラクティブに操作できる地図、グラフの作成の中で扱ったggplot2による静的な図の作成ができます。\n\nインタラクティブな地図の操作\n避難場所の位置を地図上で確認します。\nmapviewパッケージはインタラクティブに操作できる地図機能を提供します。 mapview()関数に対象の地理空間データを与えて実行すると、自在に動かせる地図の画面が表示されます。 以下に出力される地図を操作（移動、拡大・縮小、レイヤの変更、アイコンのクリック）をしてみましょう。\n\nmapview(sf_hinanjyo)\n\n\n\n\n\n# 市町村別の塗り分け\n# mapview(sf_hinanjyo, zcol = \"city\")\n\n同様の出力として、避難所等の場所を地図上にマッピングするアプリケーションを徳島県が公開しています。関心のある方はRでの出力と県のページを比較してみてください。\n\n\n静的な地図の描画とレイヤの重ね合わせ\n静的な地図はggplot2パッケージのgeom_sf()関数により生成可能です。 これにより、徳島県の形状を表すポリゴンデータ、避難場所の位置を示すポイントデータの2つを重ね合わせた地図を作成できます。\n\nggplot() +\n  geom_sf(data = filter(ne_jpn_shikoku, name == \"Tokushima\")) +\n  geom_sf(data = sf_hinanjyo,\n          aes(color = city),\n          show.legend = FALSE)+\n  coord_sf() +\n  labs(title = \"徳島県緊急避難場所の位置\")\n\n\n\n\n徳島県緊急避難場所の位置"
+    "section": "3. 地図の作成",
+    "text": "3. 地図の作成\nRでの地理空間データの可視化表現として、インタラクティブに操作できる地図、グラフの作成の中で扱ったggplot2による静的な図の作成ができます。\n\nインタラクティブな地図の操作\n避難場所の位置を地図上で確認します。\nmapviewパッケージはインタラクティブに操作できる地図機能を提供します。 mapview()関数に対象の地理空間データを与えて実行すると、自在に動かせる地図の画面が表示されます。 以下に出力される地図を操作（移動、拡大・縮小、レイヤの変更、アイコンのクリック）をしてみましょう。\n\nmapview(sf_hinanjyo)\n\n\n\n\n\n# 市町村別の塗り分け\n# mapview(sf_hinanjyo, zcol = \"city\")\n\n同様の出力として、避難所等の場所を地図上にマッピングするアプリケーションを徳島県が公開しています。関心のある方はRでの出力と県のページを比較してみてください。\n\n\n静的な地図の描画とレイヤの重ね合わせ\n静的な地図はggplot2パッケージのgeom_sf()関数により生成可能です。 これにより、徳島県の形状を表すポリゴンデータ、避難場所の位置を示すポイントデータの2つを重ね合わせた地図を作成できます。\n\nggplot() +\n  geom_sf(data = filter(ne_jpn_shikoku, name == \"Tokushima\")) +\n  geom_sf(data = sf_hinanjyo,\n          aes(color = city),\n          show.legend = FALSE)+\n  coord_sf() +\n  labs(title = \"徳島県緊急避難場所の位置\")\n\n\n\n\n徳島県緊急避難場所の位置"
   },
   {
-    "objectID": "mapping.html#地理空間データの操作",
-    "href": "mapping.html#地理空間データの操作",
+    "objectID": "mapping.html#地理空間データの処理",
+    "href": "mapping.html#地理空間データの処理",
     "title": "地図へのマッピング",
-    "section": "地理空間データの操作",
-    "text": "地理空間データの操作"
+    "section": "4. 地理空間データの処理",
+    "text": "4. 地理空間データの処理\n地理空間データの処理はsfパッケージを介して行います。 例えば、ポリゴンデータから面積を計算する、2地点（ポイント）間の距離を求める、などが可能です。\n\n# 面積の算出\nst_area(ne_jpn_shikoku)\n\nUnits: [m^2]\n[1] 4249555713 1853829862 5633714966 7091706264\n\n# 単位の変換\nunits::set_units(st_area(ne_jpn_shikoku), km^2)\n\nUnits: [km^2]\n[1] 4249.556 1853.830 5633.715 7091.706\n\n\n\n# 距離の計算\nst_distance(\n  sf_hinanjyo[1, ], # 板野町防災ステーション (徳島県板野郡板野町川端字新手崎18-1)\n  sf_hinanjyo[10, ] # 阿南市クリーンピュア (阿南市熊谷町定方44)\n)\n\nUnits: [m]\n         [,1]\n[1,] 26405.25\n\n\n\n# ポリゴンの重心点\nst_centroid(ne_jpn_shikoku)\n\nWarning in st_centroid.sf(ne_jpn_shikoku): st_centroid assumes attributes are\nconstant over geometries of x\n\n\n# A tibble: 4 × 3\n  iso_3166_2 name                 geometry\n  <chr>      <chr>             <POINT [°]>\n1 JP-36      Tokushima (134.2332 33.91233)\n2 JP-37      Kagawa    (134.0072 34.23647)\n3 JP-38      Ehime     (132.8498 33.61348)\n4 JP-39      Kochi     (133.3479 33.40644)"
   },
   {
     "objectID": "mapping.html#まとめ",
     "href": "mapping.html#まとめ",
     "title": "地図へのマッピング",
-    "section": "まとめ",
-    "text": "まとめ"
+    "section": "5. まとめ",
+    "text": "5. まとめ"
   }
 ]
