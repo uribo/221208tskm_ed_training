@@ -81,7 +81,7 @@
     "href": "index.html",
     "title": "高等学校情報科におけるR言語の活用",
     "section": "",
-    "text": "このページは、令和4年度（2022年度）徳島県教科「情報」指導者研修のための資料です。 R言語によるプログラミングを通し、教科「情報」で扱われるいくつかの単元の内容を学びます。 具体的には、「プログラミング」、「データの可視化」、「オープンデータの活用」を扱います。 またQuartoを使ったレポート作成の方法についても解説します。\n\n\n研修内容はこのウェブページ上またはスライド（公開準備中）から閲覧可能です。 研修を通してR言語によるプログラミングを行います。\nR言語の実行環境は各自のコンピュータ上に構築していただくことが望ましいですが、 当日の研修ではbinderを利用します。binderはウェブブラウザ上で実行可能なRの環境を提供します。以下のボタンをクリックまたはURLから直接リンクいただくことでbinderが起動します。 そのまましばらく待つとRStudio (Server)の画面に切り替わるので、そこからRを操作します。\nこの研修では、R言語についての詳しい解説をしませんが、代わりに参考資料を掲載します。Rの操作で不明な点に遭遇した、詳しくRを知りたい場合に適宜参考にしてください。\n\n\n\n\n瓜生真也 - 徳島大学デザイン型AI教育研究センター・助教\n\n\n\n\nこの資料はクリエイティブ・コモンズ 表示 - 非営利 - 継承 4.0 国際 (CC BY-NC-SA 4.0) ライセンスの下に提供しています。ただし、資料中のコード部分はMITライセンスの下に提供します。\n本資料では次のオープンデータを利用します。\n\nSSDSE-市区町村 https://www.nstac.go.jp/use/literacy/ssdse/ 独立行政法人統計センター\nSSDSE-県別推移 https://www.nstac.go.jp/use/literacy/ssdse/ 独立行政法人統計センター\n緊急避難場所 (徳島県) https://opendata.pref.tokushima.lg.jp/dataset/487.html 徳島県オープンデータポータルサイト - クリエイティブ・コモンズ 表示 4.0 国際\n\n資料の中で利用するにはそれぞれライセンスが付与されています。 利用の際は別途ライセンスを確認してください。"
+    "text": "このページは、令和4年度（2022年度）徳島県教科「情報」指導者研修のための資料です。 R言語によるプログラミングを通し、教科「情報」で扱われるいくつかの単元の内容を学びます。 具体的には、「プログラミング」、「データの可視化」、「オープンデータの活用」を扱います。 またQuartoを使ったレポート作成についても解説します。\n\n\n研修内容はこのウェブページ上またはスライド（公開準備中）から閲覧可能です。 研修を通してR言語によるプログラミングを行います。\nR言語の実行環境は各自のコンピュータ上に構築していただくことが望ましいですが、 当日の研修ではbinderを利用します。binderはウェブブラウザ上で実行可能なRの環境を提供します。以下のボタンをクリックまたはURLから直接リンクいただくことでbinderが起動します。 そのまましばらく待つとRStudio (Server)の画面に切り替わるので、そこからRを操作します。\nこの研修ではR言語についての詳しい解説をしませんが、代わりに参考資料を掲載します。Rの操作で不明な点に遭遇した、詳しくRを知りたい場合に適宜参考にしてください。\n\n\n\n\n瓜生真也 - 徳島大学デザイン型AI教育研究センター・助教\n\n\n\n\nこの資料はクリエイティブ・コモンズ 表示 - 非営利 - 継承 4.0 国際 (CC BY-NC-SA 4.0) ライセンスの下に提供しています。ただし、資料中のコード部分はMITライセンスの下に提供します。\n本資料では次のオープンデータを利用します。\n\nSSDSE-市区町村 https://www.nstac.go.jp/use/literacy/ssdse/ 独立行政法人統計センター\nSSDSE-県別推移 https://www.nstac.go.jp/use/literacy/ssdse/ 独立行政法人統計センター\n緊急避難場所 (徳島県) https://opendata.pref.tokushima.lg.jp/dataset/487.html 徳島県オープンデータポータルサイト - クリエイティブ・コモンズ 表示 4.0 国際\nNatural Earth https://www.naturalearthdata.com - パブリックドメイン"
   },
   {
     "objectID": "index.html#参考資料",
@@ -109,28 +109,35 @@
     "href": "mapping.html",
     "title": "地図へのマッピング",
     "section": "",
-    "text": "library(sf) # 地理空間データの操作\nlibrary(mapview) # 地図のインタラクティブな操作\nlibrary(ggplot2) # データ可視化\nlibrary(rnaturalearth)\nlibrary(rnaturalearthhires)"
+    "text": "多くの統計データには、都道府県名やメッシュ、緯度経度の座標といった地理的な空間情報を含みます。 このような地理空間情報をもつデータ（地理空間データ）は地図上に投影することで内容の理解を深めることが期待できます。 また、地理空間データの操作により分析の幅を広げることができます。 Rの地理空間データを使って、これらの処理を行いましょう。"
   },
   {
-    "objectID": "mapping.html#地図データの操作",
-    "href": "mapping.html#地図データの操作",
+    "objectID": "mapping.html#パッケージの読み込み",
+    "href": "mapping.html#パッケージの読み込み",
     "title": "地図へのマッピング",
-    "section": "地図データの操作",
-    "text": "地図データの操作"
+    "section": "1. パッケージの読み込み",
+    "text": "1. パッケージの読み込み\nここでもいくつかのパッケージを使います。 関数を利用するパッケージを次のコマンドで読み込みます。\n\nlibrary(dplyr) # データ操作\nlibrary(sf) # 地理空間データの操作\nlibrary(mapview) # 地図のインタラクティブな操作\nlibrary(ggplot2) # データ可視化\nlibrary(rnaturalearth) # パブリックドメインで利用可能な県単位のポリゴンデータ\nlibrary(rnaturalearthhires)"
   },
   {
-    "objectID": "mapping.html#インタラクティブな地図の操作",
-    "href": "mapping.html#インタラクティブな地図の操作",
+    "objectID": "mapping.html#地理空間データの用意",
+    "href": "mapping.html#地理空間データの用意",
     "title": "地図へのマッピング",
-    "section": "インタラクティブな地図の操作",
-    "text": "インタラクティブな地図の操作\nオープンデータの活用の中で取り上げた「緊急避難場所 (徳島県)」を再び利用します。 このデータは県内の市町村が指定する洪水災害発生時に利用可能な施設に関しての位置情報を記録したものでした。 このデータに含まれる位置情報（緯度、経度）をもとに、Rで地図を作成してみます。\nst_as_sf()関数を使って、データフレーム中の緯度 latitudeと経度 longitudeの列の値をもとに地理空間情報データ（ポイント）に変換します。\n\n# 緯度経度の座標からポイントデータを生成\nsf_hinanjyo <- \n  st_as_sf(df_hinanjyo,\n           coords = c(\"longitude\", \"latitude\"),\n           crs = 4326)\n\n避難場所の位置を地図上で確認します。\nmapviewパッケージはインタラクティブに操作できる地図機能を提供します。 以下に出力される地図を操作（移動、拡大・縮小、レイヤの変更、アイコンのクリック）をしてみましょう。\n\nmapview(sf_hinanjyo)\n\n\n\n\n\n# 市町村別の塗り分け\n# mapview(sf_hinanjyo, zcol = \"city\")"
+    "section": "2. 地理空間データの用意",
+    "text": "2. 地理空間データの用意\nオープンデータの活用の中で取り上げた「緊急避難場所 (徳島県)」を再び利用します。 このデータは県内の市町村が指定する洪水災害発生時に利用可能な施設に関しての位置情報を記録したものでした。 このデータに含まれる位置情報（緯度、経度）をもとに、Rで地理空間データを作成してみます。\nsfパッケージのst_as_sf()関数を使って、データフレーム中の緯度 latitudeと経度 longitudeの列の値をもとに地理空間情報データ（ポイント）に変換します。\n\n# 緯度経度の座標からポイントデータを生成\nsf_hinanjyo <- \n  st_as_sf(df_hinanjyo,\n           coords = c(\"longitude\", \"latitude\"),\n           crs = 4326)\n\nglimpse(sf_hinanjyo)\n\nRows: 701\nColumns: 5\n$ city     <chr> \"板野郡板野町\", \"阿南市\", \"阿南市\", \"阿南市\", \"阿南市\", \"阿南…\n$ title    <chr> \"板野町防災ステーション\", \"新野小学校\", \"新野東小学校\", \"阿南…\n$ address  <chr> \"徳島県板野郡板野町川端字新手崎18-1\", \"阿南市新野町南宮ノ久保…\n$ type     <chr> \"指定緊急避難場所（法指定）\", \"指定緊急避難場所（法指定）\", \"…\n$ geometry <POINT [°]> POINT (134.4729 34.13761), POINT (134.5811 33.84699), P…\n\n\ngeometry列に各施設の位置がポイントデータとして記録されています。\n続いて、徳島県の形状を示すためのポリゴンデータを準備します。 ここではパブリックドメインで使用できるNatural EarthのデータをRから取得するrnaturalearthパッケージを用います。 次のコマンドで四国４県のポリゴンデータを用意します。\n\n# rnaturalearthから四国のポリゴンを準備する\nne_jpn_shikoku <- \n  rnaturalearth::ne_states(country = \"Japan\", returnclass = \"sf\") |> \n  filter(region == \"Shikoku\") |> \n  select(iso_3166_2, name)\n\nne_jpn_shikoku\n\n# A tibble: 4 × 3\n  iso_3166_2 name                                                       geometry\n  <chr>      <chr>                                            <MULTIPOLYGON [°]>\n1 JP-36      Tokushima (((134.4424 34.20827, 134.4686 34.20746, 134.4952 34.224…\n2 JP-37      Kagawa    (((133.5919 34.02381, 133.6209 34.04556, 133.634 34.0607…\n3 JP-38      Ehime     (((132.6399 32.90892, 132.6272 32.90632, 132.6184 32.906…\n4 JP-39      Kochi     (((134.2957 33.53032, 134.2732 33.508, 134.2446 33.46075…\n\n\nこのほか、行政区域のデータには国土数値情報ダウンロードサービスの行政区域データなどが利用できます。国土数値情報の行政区域データは市区町村別にポリゴンデータがあたえられているため、細かな地域の可視化や分析に役立ちます。"
   },
   {
-    "objectID": "mapping.html#静的な地図の描画とレイヤの重ね合わせ",
-    "href": "mapping.html#静的な地図の描画とレイヤの重ね合わせ",
+    "objectID": "mapping.html#地図の作成",
+    "href": "mapping.html#地図の作成",
     "title": "地図へのマッピング",
-    "section": "静的な地図の描画とレイヤの重ね合わせ",
-    "text": "静的な地図の描画とレイヤの重ね合わせ\n静的な地図はggplot2パッケージのgeom_sf()関数により生成可能です。\n\nggplot() +\n  geom_sf(data = sf_hinanjyo,\n          aes(color = city),\n          show.legend = FALSE)+\n  coord_sf() +\n  labs(title = \"徳島県緊急避難場所の位置\")\n\n\n\n\n徳島県緊急避難場所の位置\n\n\n\n\nこの図に徳島県の行政区域を重ね合わせ、緊急避難場所の位置をわかりやすく示してみます。 rnaturalearthパッケージはパブリックドメインで使用できるポリゴンデータを提供します。 次のコマンドで四国４県のポリゴンデータを用意します。\n\n# rnaturalearthから四国のポリゴンを準備する\nne_jpn_shikoku <- \n  rnaturalearth::ne_states(country = \"Japan\", returnclass = \"sf\") |> \n  filter(region == \"Shikoku\") |> \n  select(iso_3166_2, name)\n\nne_jpn_shikoku\n\n# A tibble: 4 × 3\n  iso_3166_2 name                                                       geometry\n  <chr>      <chr>                                            <MULTIPOLYGON [°]>\n1 JP-36      Tokushima (((134.4424 34.20827, 134.4686 34.20746, 134.4952 34.224…\n2 JP-37      Kagawa    (((133.5919 34.02381, 133.6209 34.04556, 133.634 34.0607…\n3 JP-38      Ehime     (((132.6399 32.90892, 132.6272 32.90632, 132.6184 32.906…\n4 JP-39      Kochi     (((134.2957 33.53032, 134.2732 33.508, 134.2446 33.46075…\n\n\n\nggplot() +\n  geom_sf(data = filter(ne_jpn_shikoku, name == \"Tokushima\")) +\n  geom_sf(data = sf_hinanjyo,\n          aes(color = city),\n          show.legend = FALSE)+\n  coord_sf()\n\nこのほか、行政区域のデータには国土数値情報ダウンロードサービスの行政区域データなどが利用できます。"
+    "section": "2. 地図の作成",
+    "text": "2. 地図の作成\nRでの地理空間データの可視化表現として、インタラクティブに操作できる地図、グラフの作成の中で扱ったggplot2による静的な図の作成ができます。\n\nインタラクティブな地図の操作\n避難場所の位置を地図上で確認します。\nmapviewパッケージはインタラクティブに操作できる地図機能を提供します。 mapview()関数に対象の地理空間データを与えて実行すると、自在に動かせる地図の画面が表示されます。 以下に出力される地図を操作（移動、拡大・縮小、レイヤの変更、アイコンのクリック）をしてみましょう。\n\nmapview(sf_hinanjyo)\n\n\n\n\n\n# 市町村別の塗り分け\n# mapview(sf_hinanjyo, zcol = \"city\")\n\n同様の出力として、避難所等の場所を地図上にマッピングするアプリケーションを徳島県が公開しています。関心のある方はRでの出力と県のページを比較してみてください。\n\n\n静的な地図の描画とレイヤの重ね合わせ\n静的な地図はggplot2パッケージのgeom_sf()関数により生成可能です。 これにより、徳島県の形状を表すポリゴンデータ、避難場所の位置を示すポイントデータの2つを重ね合わせた地図を作成できます。\n\nggplot() +\n  geom_sf(data = filter(ne_jpn_shikoku, name == \"Tokushima\")) +\n  geom_sf(data = sf_hinanjyo,\n          aes(color = city),\n          show.legend = FALSE)+\n  coord_sf() +\n  labs(title = \"徳島県緊急避難場所の位置\")\n\n\n\n\n徳島県緊急避難場所の位置"
+  },
+  {
+    "objectID": "mapping.html#地理空間データの操作",
+    "href": "mapping.html#地理空間データの操作",
+    "title": "地図へのマッピング",
+    "section": "地理空間データの操作",
+    "text": "地理空間データの操作"
   },
   {
     "objectID": "mapping.html#まとめ",
