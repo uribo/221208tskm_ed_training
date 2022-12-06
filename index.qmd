@@ -36,6 +36,7 @@ R言語の実行環境は各自のコンピュータ上に構築していただ�
 
 本資料では次のオープンデータを利用します。
 
+- SSDSE-市区町村 https://www.nstac.go.jp/use/literacy/ssdse/ 独立行政法人統計センター
 - SSDSE-県別推移 https://www.nstac.go.jp/use/literacy/ssdse/ 独立行政法人統計センター
 - 緊急避難場所 (徳島県) https://opendata.pref.tokushima.lg.jp/dataset/487.html 徳島県オープンデータポータルサイト - クリエイティブ・コモンズ 表示 4.0 国際
 

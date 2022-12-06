@@ -151,13 +151,15 @@ df_hinanjyo <-
 
 ## 3. データの操作・加工
 
-<!-- データを読み込んだ後は 
+データを読み込んだ後は自由自在にデータを操作したり加工を行うことができます。
+以下に示すとおり、データ操作に便利な関数を提供するdplyrパッケージを使ってデータに変更を加えていきましょう。
 
-dplyrパッケージが提供する
+- `select()`... 列の選択
+- `filter()`... 行の絞り込み
+- `mutate()`... 値の編集
 
-- select()
-- filter()
-- mutate()
+<!--  
+
 
 - arrange()
 - group_by(), summarise()
@@ -249,18 +251,68 @@ df_hinanjyo <-
 今度は市町村別の避難場所のカウントが正しく行われているように見えます。
 
 ```{r}
-df_city_count <- 
+df_tokushima_hinanjyo_count <- 
   # sort = TRUE ... 市町村の項目が多い順（降順）に出力する
   count(df_hinanjyo, city, sort = TRUE)
 
-df_city_count
+df_tokushima_hinanjyo_count
 ```
 
 
 ```{r}
 # いくつかの行は欠損値のまま
-filter(df_hinanjyo, is.na(city))
+filter(df_tokushima_hinanjyo_count, is.na(city))
 ```
+
+市町村別の避難場所の集計結果を見ると、三好市が最も数が多いことがわかります。
+しかしこの値は人口や面積を考慮した値ではありません。
+人口や面積の単位あたりの避難場所の数を比較することで、市町村別の評価が可能となります。
+
+[グラフの作成](plot.html)で利用した[教育用標準データセット](https://www.nstac.go.jp/use/literacy/ssdse/)の中には、市区町村別の統計データを記録したものもあります。
+データはすでにダウンロードされ、徳島県の市町村に関する情報が参照できる状態となっています。
+次のコマンドを実行し、データをRに読み込みましょう。
+
+```{r}
+df_ssdse_a_tiny_tokushima <- 
+  read_rds(here("data-raw/ssdse_a_tiny_tokushima.rds"))
+
+df_ssdse_a_tiny_tokushima
+```
+
+dplyrパッケージではデータフレームを結合する関数`*_join()`を提供します。
+関数の引数に対象となる2つのデータフレームを指定し、結合の際のキーとなる変数を引数byに与えて実行します。
+
+```{r}
+df_tokushima_hinanjyo_count <- 
+  inner_join(
+  df_tokushima_hinanjyo_count,
+  df_ssdse_a_tiny_tokushima,
+  by = c("city" = "市区町村"))
+
+df_tokushima_hinanjyo_count
+```
+
+`city`と`n`の2列からなるデータフレーム`df_tokushima_hinanjyo_count`に、`df_ssdse_a_tiny_tokushima`がもつ列の情報が加わったことがわかります。
+
+追加された情報から、避難場所の数を単位当たり数を求めてみます。
+
+```{r}
+# 災害種別_洪水
+df_tokushima_hinanjyo_count <- 
+  transmute(df_tokushima_hinanjyo_count,
+          `市町村` = city,
+          `避難場所件数` = n,
+          `避難場所件数(人口1万人あたり)` = (n / `人口・世帯数_総人口`) * 10000)
+
+df_tokushima_hinanjyo_count <-
+  # 人口1万人当たりの避難場所件数の順に並び替え
+  arrange(df_tokushima_hinanjyo_count,
+          desc(`避難場所件数(人口1万人あたり)`))
+```
+
+人口1万人あたりで見ても、三好市の避難場所件数が最も多いことに変わりはありませんでしたが、
+勝浦川の流域に位置する勝浦町、上勝町が上位になりました。
+
 
 ## 4. グラフの作成
 
@@ -275,8 +327,8 @@ filter(df_hinanjyo, is.na(city))
 #| fig-cap: 徳島県内緊急避難場所（災害種別 洪水）の市町村別件数
 #| label: shelter_count
 p <- 
-  ggplot(data = df_city_count,
-       aes(city, n)) +
+  ggplot(data = df_tokushima_hinanjyo_count,
+       aes(市町村, 避難場所件数)) +
   # 棒グラフの指定
   geom_bar(
     stat = "identity", # n （市町村別の避難場所の数）が棒の高さに用いられる
@@ -320,8 +372,8 @@ p +
 #| label: shelter_count_coord_modify
 #| fig-height: 6
 p <- 
-  ggplot(data = df_city_count,
-       aes(forcats::fct_reorder(city, n), n)) +
+  ggplot(data = df_tokushima_hinanjyo_count,
+       aes(forcats::fct_reorder(市町村, 避難場所件数), 避難場所件数)) +
   geom_bar(stat = "identity",
            fill = "#3F54B4") +
   coord_flip() +

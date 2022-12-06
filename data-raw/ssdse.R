@@ -3,12 +3,23 @@ library(dplyr)
 
 
 # SSDSEデータの読み込み -----------------------------------------------------------
+df_ssdse_a <- 
+  ssdse::read_ssdse_a("https://www.nstac.go.jp/sys/files/SSDSE-A-2022.csv",
+                    lang = "ja")
+
 df_ssdse_b <- 
   ssdse::read_ssdse_b("https://www.nstac.go.jp/sys/files/SSDSE-B-2022.csv",
                     lang = "ja")
 
 
 # データの加工 ------------------------------------------------------------------
+df_ssdse_a_tiny_tokushima <- 
+  df_ssdse_a |> 
+  filter(都道府県 == "徳島県") |> 
+  select(都道府県, 市区町村, `人口・世帯`, `自然環境`) |> 
+  tidyr::unnest(cols = c(`人口・世帯`, `自然環境`)) |> 
+  select(市区町村, `人口・世帯数_総人口`, `総面積（北方地域及び竹島を除く）`, `可住地面積`)
+
 df_ssdse_b_tiny <- 
   df_ssdse_b |>
   select(`年度`, `都道府県`, `人口・世帯`, `自然環境`, `教育`, `家計`) |> 
@@ -28,5 +39,7 @@ df_ssdse_b_tiny_shikoku <-
 
 
 # データの保存 ------------------------------------------------------------------
+df_ssdse_a_tiny_tokushima |> 
+  readr::write_rds(here::here("data-raw/ssdse_a_tiny_tokushima.rds"))
 df_ssdse_b_tiny_shikoku |> 
   readr::write_rds(here::here("data-raw/ssdse_b_tiny_shikoku.rds"))
