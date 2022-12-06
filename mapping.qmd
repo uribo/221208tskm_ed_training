@@ -5,28 +5,35 @@ title: "地図へのマッピング"
 ```{r}
 #| include: false
 library(readr)
-library(dplyr)
 library(here)
 ```
+
+多くの統計データには、都道府県名やメッシュ、緯度経度の座標といった地理的な空間情報を含みます。
+このような地理空間情報をもつデータ（地理空間データ）は地図上に投影することで内容の理解を深めることが期待できます。
+また、地理空間データの操作により分析の幅を広げることができます。
+Rの地理空間データを使って、これらの処理を行いましょう。
+
+## 1. パッケージの読み込み
+
+ここでもいくつかのパッケージを使います。
+関数を利用するパッケージを次のコマンドで読み込みます。
 
 ```{r}
 #| warning: false
 #| message: false
+library(dplyr) # データ操作
 library(sf) # 地理空間データの操作
 library(mapview) # 地図のインタラクティブな操作
 library(ggplot2) # データ可視化
-library(rnaturalearth)
+library(rnaturalearth) # パブリックドメインで利用可能な県単位のポリゴンデータ
 library(rnaturalearthhires)
 ```
 
-## 地図データの操作
-
-## インタラクティブな地図の操作
+## 2. 地理空間データの用意
 
 [オープンデータの活用](shelter.html)の中で取り上げた「緊急避難場所 (徳島県)」を再び利用します。
 このデータは県内の市町村が指定する洪水災害発生時に利用可能な施設に関しての位置情報を記録したものでした。
-このデータに含まれる位置情報（緯度、経度）をもとに、Rで地図を作成してみます。
-
+このデータに含まれる位置情報（緯度、経度）をもとに、Rで地理空間データを作成してみます。
 
 ```{r}
 #| include: false
@@ -39,7 +46,7 @@ df_hinanjyo <-
   mutate(city = stringr::str_extract(address, "(.{2}郡.{2,3}町|.{2,3}(市|町|村))"))
 ```
 
-`st_as_sf()`関数を使って、データフレーム中の緯度 `latitude`と経度 `longitude`の列の値をもとに地理空間情報データ（ポイント）に変換します。
+sfパッケージの`st_as_sf()`関数を使って、データフレーム中の緯度 `latitude`と経度 `longitude`の列の値をもとに地理空間情報データ（ポイント）に変換します。
 
 ```{r}
 # 緯度経度の座標からポイントデータを生成
@@ -47,38 +54,14 @@ sf_hinanjyo <-
   st_as_sf(df_hinanjyo,
            coords = c("longitude", "latitude"),
            crs = 4326)
+
+glimpse(sf_hinanjyo)
 ```
 
-避難場所の位置を地図上で確認します。
+`geometry`列に各施設の位置がポイントデータとして記録されています。
 
-mapviewパッケージはインタラクティブに操作できる地図機能を提供します。
-以下に出力される地図を操作（移動、拡大・縮小、レイヤの変更、アイコンのクリック）をしてみましょう。
-
-```{r}
-mapview(sf_hinanjyo)
-# 市町村別の塗り分け
-# mapview(sf_hinanjyo, zcol = "city")
-```
-
-<!-- https://maps.pref.tokushima.lg.jp/hinansyotou/ -->
-
-## 静的な地図の描画とレイヤの重ね合わせ
-
-静的な地図はggplot2パッケージの`geom_sf()`関数により生成可能です。
-
-```{r}
-#| label: tokushima-shelter-location
-#| fig-cap: 徳島県緊急避難場所の位置
-ggplot() +
-  geom_sf(data = sf_hinanjyo,
-          aes(color = city),
-          show.legend = FALSE)+
-  coord_sf() +
-  labs(title = "徳島県緊急避難場所の位置")
-```
-
-この図に徳島県の行政区域を重ね合わせ、緊急避難場所の位置をわかりやすく示してみます。
-rnaturalearthパッケージはパブリックドメインで使用できるポリゴンデータを提供します。
+続いて、徳島県の形状を示すためのポリゴンデータを準備します。
+ここではパブリックドメインで使用できる[Natural Earth](https://www.naturalearthdata.com)のデータをRから取得するrnaturalearthパッケージを用います。
 次のコマンドで四国４県のポリゴンデータを用意します。
 
 ```{r}
@@ -91,17 +74,46 @@ ne_jpn_shikoku <-
 ne_jpn_shikoku
 ```
 
-```{r}
-#| eval: false
+このほか、行政区域のデータには[国土数値情報ダウンロードサービス](https://nlftp.mlit.go.jp/ksj/)の[`行政区域データ`](https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_1.html)などが利用できます。国土数値情報の行政区域データは市区町村別にポリゴンデータがあたえられているため、細かな地域の可視化や分析に役立ちます。
 
+## 2. 地図の作成
+
+Rでの地理空間データの可視化表現として、インタラクティブに操作できる地図、[グラフの作成](plot.html)の中で扱ったggplot2による静的な図の作成ができます。
+
+### インタラクティブな地図の操作
+
+避難場所の位置を地図上で確認します。
+
+mapviewパッケージはインタラクティブに操作できる地図機能を提供します。
+`mapview()`関数に対象の地理空間データを与えて実行すると、自在に動かせる地図の画面が表示されます。
+以下に出力される地図を操作（移動、拡大・縮小、レイヤの変更、アイコンのクリック）をしてみましょう。
+
+```{r}
+mapview(sf_hinanjyo)
+# 市町村別の塗り分け
+# mapview(sf_hinanjyo, zcol = "city")
+```
+
+同様の出力として、避難所等の場所を地図上にマッピングするアプリケーションを[徳島県が公開](https://maps.pref.tokushima.lg.jp/hinansyotou/)しています。関心のある方はRでの出力と県のページを比較してみてください。
+
+
+### 静的な地図の描画とレイヤの重ね合わせ
+
+静的な地図はggplot2パッケージの`geom_sf()`関数により生成可能です。
+これにより、徳島県の形状を表すポリゴンデータ、避難場所の位置を示すポイントデータの2つを重ね合わせた地図を作成できます。
+
+```{r}
+#| label: tokushima-shelter-location
+#| fig-cap: 徳島県緊急避難場所の位置
 ggplot() +
   geom_sf(data = filter(ne_jpn_shikoku, name == "Tokushima")) +
   geom_sf(data = sf_hinanjyo,
           aes(color = city),
           show.legend = FALSE)+
-  coord_sf()
+  coord_sf() +
+  labs(title = "徳島県緊急避難場所の位置")
 ```
 
-このほか、行政区域のデータには[国土数値情報ダウンロードサービス](https://nlftp.mlit.go.jp/ksj/)の[`行政区域データ`](https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_1.html)などが利用できます。
+## 地理空間データの操作
 
 ## まとめ
