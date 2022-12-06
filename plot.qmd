@@ -15,42 +15,226 @@ title: "グラフの作成"
 [教育用標準データセット](https://www.nstac.go.jp/use/literacy/ssdse/)は、データサイエンス演習、統計教育などに活用されることを期待したデータとして[独立行政法人統計センター](https://www.nstac.go.jp)が公開しているものです。
 データにはいくつかの種類があり、都道府県・市区町村別の集計値、時系列別での値などがあります。
 
+ここでは`SSDSE-県別推移（SSDSE-B）`のデータを利用します。
+このデータは総務省統計局がとりまとめた「統計でみる都道府県・市区町村のすがた(社会・人口統計体系)」の結果を
+都道府県・時系列毎に整理したものです。
+
+このうち、四国４県（徳島県、香川県、愛媛県、高知県）の項目を抜き出したデータを研修用に用意しています[^1]。
+次のコマンドを実行するとデータが読み込まれます。
+
+[^1]: 元のデータの読み込みから加工の処理は [`data-raw/ssdse.R`](https://github.com/uribo/221208tskm_ed_training/blob/main/data-raw/ssdse.R) に記載しています。
+
+```{r}
+# 教育用標準データセット 県別推移 から四国４県のデータを取り出したものを読み込む
+df_ssdse_b_tiny_shikoku <-
+  readr::read_rds(here::here("data-raw/ssdse_b_tiny_shikoku.rds"))
+```
+
+都道府県・年度別に`人口・世帯`、`自然環境`、`教育`、`家計`の4つの項目についてのデータを格納しています。
+
+```{r}
+dplyr::glimpse(df_ssdse_b_tiny_shikoku)
+```
+
+このデータの特徴や関係を理解するために、データをグラフに表現してみましょう。
+四国４県の時系列の変化だけでなく、2019年度に限定したデータについても別途用意し、４県の比較をしてみましょう。
+
+```{r}
+# 2019年のデータに絞り込む
+df_ssdse_b_tiny_shikoku2019 <- 
+  dplyr::filter(df_ssdse_b_tiny_shikoku,
+                年度 == "2019")
+
+df_ssdse_b_tiny_shikoku2019
+```
 
 ## グラフ表現
 
+グラフの表現方法は次に示す通り様々な種類があります。
+またこのほかにも多様なグラフが存在します。
+
 - 折れ線グラフ
 - 棒グラフ
-- （円グラフ）
+- 円グラフ
 - 散布図
-- ヒストグラム
 - 箱ひげ図
+- ヒストグラム
+
+Rには標準機能としてグラフ作成のための関数が利用でき、これらのグラフも作成可能です。
+例えば、棒グラフの作成を指示する関数は`barplot()`、円グラフの作成には`pie()`関数を使います。
+これらの関数を用いて四国４県の2019年度の総人口をグラフに描画します。まずは棒グラフです。
+
+```{r}
+#| label: fig-barplot
+#| fig-cap: 2019年度 四国４県の総人口を棒グラフで表現
+barplot(
+  # 棒グラフに描画する値を指定
+  df_ssdse_b_tiny_shikoku2019$総人口,
+  # 棒グラフの項目名
+  names.arg = df_ssdse_b_tiny_shikoku2019$都道府県,
+  # 塗り分けの指定
+  col = palette.colors(n = 4),
+  # グラフのタイトル
+  main = "2019年度 四国４県の総人口",
+  sub = "元データ: 独立行政法人統計センター 教育用標準データセット SSDSE-B")
+```
+
+つづいて円グラフです。
+
+```{r}
+#| label: fig-piechart
+#| fig-cap: 2019年度 四国４県の総人口を円グラフので表現
+pie(
+  # 棒グラフに描画する値を指定
+  df_ssdse_b_tiny_shikoku2019$総人口,
+  # 円グラフの項目名
+  labels = df_ssdse_b_tiny_shikoku2019$都道府県,
+  clockwise = TRUE,
+  col = palette.colors(n = 4),
+  main = "2019年度 四国４県の総人口の割合",
+  sub = "元データ: 独立行政法人統計センター 教育用標準データセット SSDSE-B")
+```
+
+しかし、標準の関数ではグラフの種類ごとに用いる関数の利用方法に統一性がない問題があります。
+`barplot()`関数と`pie()`関数では、項目名を示すのにそれぞれ`names.arg`、`labels`引数を指定することになります。
+これに対して、ggplot2と呼ばれるパッケージを用いることで統一的なグラフの作成が可能となります。
+次からはggplot2を用いたグラフ作成の処理を見ていきましょう。
+
+
+### ggplot2を用いたグラフ作成
+
+ggplot2の利用にはパッケージをインストール・読み込む必要があります。
+研修環境(binder)では事前にパッケージをインストール済みですが、自身の環境でggplot2を利用するには次のコマンドでパッケージのインストールを行っておきましょう。
 
 ```{r}
 #| eval: false
+#| echo: true
+install.packages("ggplot2")
+```
 
+パッケージを利用可能にするには以下のコマンドを実行します。
+
+```{r}
 library(ggplot2)
-library(ggrepel)
-ggplot(df_ssdse_b_tiny_shikoku,
-       aes(as.character(`年度`), `出生数`, group = `都道府県`)) +
-  geom_line()
-ggplot(df_ssdse_b_tiny_shikoku,
-       aes(`年平均気温`, `降水量（年間）`)) +
-  geom_point()
+```
 
-df_ssdse_b_tiny |> 
-  filter(`都道府県` == "徳島県") |> 
-  ggplot(aes(as.character(`年度`), `降水量（年間）`)) +
-  geom_bar(stat = "identity")
+ggplot2を使ったグラフ作成の基本は次の3要素からなります。
 
-# 積み上げ
-df_ssdse_b_tiny_shikoku |> 
-  filter(`年度` == 2019) |> 
-  select(`都道府県`, 
-         `幼稚園数`, `小学校数`, `中学校数`, `高等学校数`, `短期大学数`, `大学数`) |> 
-  tidyr::pivot_longer(cols = c(`幼稚園数`, `小学校数`, `中学校数`, `高等学校数`, `短期大学数`, `大学数`),
+1. データ... グラフに描画するデータ
+2. 審美的要素...グラフ中の（審美的）要素とデータの紐付け 
+3. レイヤ... グラフの種類、表現方法
+
+具体的には`ggplot()`関数と`aes()`関数、`geom_*()`関数を組み合わせて（`+`演算子を用います）グラフを作成します。
+ggplot2の利点は統一性があるだけでなく、拡張性に優れていることも挙げられます。
+ここでは紹介しませんが、グラフの細かいところまで調整できることができます。
+
+```{r}
+#| eval: false
+#| echo: true
+# ggplot2によるグラフ作成の基本
+ggplot(
+  # データの指定
+  data = data,
+  # 審美的要素の指定
+  aes(
+    # x軸に割り当てる値
+    x = x, 
+    # y軸に割り当てる値
+    y = y,
+    # 塗り分けに用いる値
+    color = z)) +
+  # グラフの種類 ... geom_bar()、geom_line()関数など
+  geom_()
+```
+
+ggplot2による、さまざまな種類のグラフ表現を示します。
+`geom_*()`関数によるグラフの種類が変わっても、コードの書き方に大きな違いがない点が分かるかと思います。
+
+#### 折れ線グラフ
+
+```{r}
+#| label: ggplot2-line
+#| fig-cap: 四国４県の出生数の推移
+ggplot(data = df_ssdse_b_tiny_shikoku,
+       aes(x = 年度, 
+           y = 出生数, 
+           color = 都道府県,
+           group = 都道府県)) +
+  geom_line() +
+  labs(title = "四国４県の出生数の推移(2008年から2019年）",
+       subtitle = "元データ: 独立行政法人統計センター 教育用標準データセット SSDSE-B")
+```
+
+
+#### 棒グラフ
+
+```{r}
+#| label: ggplot2-bar
+#| fig-cap: 四国４県の総人口
+ggplot(data = df_ssdse_b_tiny_shikoku2019,
+       aes(x = 都道府県, 
+           y = 総人口,
+           fill = 都道府県)) +
+  geom_bar(stat = "identity") +
+  labs(title = "2019年度 四国４県の総人口",
+       subtitle = "元データ: 独立行政法人統計センター 教育用標準データセット SSDSE-B")
+```
+
+#### 積み上げ棒グラフ
+
+```{r}
+#| label: ggplot2-bar-stack
+#| fig-cap: 四国４県の種類別学校数
+df_ssdse_b_tiny_shikoku2019 |> 
+  dplyr::select(`都道府県`, 
+         `幼稚園数`, `小学校数`, `中学校数`, 
+         `高等学校数`, `短期大学数`, `大学数`) |> 
+  tidyr::pivot_longer(cols = c(`幼稚園数`, `小学校数`, `中学校数`, 
+                               `高等学校数`, `短期大学数`, `大学数`),
                       names_to = "stage",
                       values_to = "value") |> 
-  ggplot(aes(`都道府県`, value, group = stage, fill = stage)) +
-  geom_bar(stat = "identity", position = "stack")
+  dplyr::mutate(stage = stringr::str_remove(stage, "数$")) |> 
+  dplyr::mutate(stage = forcats::fct_rev(
+    forcats::fct_relevel(stage,
+                         "幼稚園", "小学校", "中学校", "高等学校", "短期大学", "大学"))) |> 
+  ggplot(aes(都道府県, value, 
+             group = stage, fill = stage)) +
+  geom_bar(stat = "identity", 
+           position = "stack") +
+  labs(title = "2019年度 四国４県の種類別学校数",
+       subtitle = "元データ: 独立行政法人統計センター 教育用標準データセット SSDSE-B")
 ```
+
+#### 散布図
+
+```{r}
+#| label: ggplot2-scatter
+#| fig-cap: 四国４県における教育費と消費支出の関係
+ggplot(df_ssdse_b_tiny_shikoku) +
+  aes(`教育費（二人以上の世帯）`, 
+      `消費支出（二人以上の世帯）`) +
+  geom_point(aes(color = 都道府県)) +
+  labs(title = "四国４県における教育費と消費支出の関係",
+       subtitle = "元データ: 独立行政法人統計センター 教育用標準データセット SSDSE-B")
+```
+
+
+#### 箱ひげ図
+
+```{r}
+#| label: ggplot2-box
+#| fig-cap: 四国４県における消費支出（二人以上の世帯）の箱ひげ図
+ggplot(df_ssdse_b_tiny_shikoku) +
+  aes(都道府県, `消費支出（二人以上の世帯）`) +
+  geom_boxplot() +
+  labs(title = "四国４県における消費支出（二人以上の世帯）の箱ひげ図",
+       subtitle = "元データ: 独立行政法人統計センター 教育用標準データセット SSDSE-B")
+```
+
+## まとめ
+
+## 参考資料
+
+- [Rによるデータ可視化と地図表現](https://speakerdeck.com/s_uryu/rniyorudetake-shi-hua-todi-tu-biao-xian)
+
 
