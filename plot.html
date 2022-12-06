@@ -163,7 +163,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </li>  
         <li>
     <a class="dropdown-item" href="./report.html">
- <span class="dropdown-text">4. 地域データの分析とレポート作成</span></a>
+ <span class="dropdown-text">4. レポート作成</span></a>
   </li>  
     </ul>
   </li>
@@ -182,15 +182,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <h2 id="toc-title">目次</h2>
    
   <ul>
-  <li><a href="#データの用意" id="toc-データの用意" class="nav-link active" data-scroll-target="#データの用意">データの用意</a></li>
-  <li><a href="#グラフ表現" id="toc-グラフ表現" class="nav-link" data-scroll-target="#グラフ表現">グラフ表現</a>
+  <li><a href="#データの用意" id="toc-データの用意" class="nav-link active" data-scroll-target="#データの用意">1. データの用意</a></li>
+  <li><a href="#グラフ表現" id="toc-グラフ表現" class="nav-link" data-scroll-target="#グラフ表現">2. グラフ表現</a>
   <ul class="collapse">
   <li><a href="#ggplot2を用いたグラフ作成" id="toc-ggplot2を用いたグラフ作成" class="nav-link" data-scroll-target="#ggplot2を用いたグラフ作成">ggplot2を用いたグラフ作成</a></li>
   </ul></li>
-  <li><a href="#まとめ" id="toc-まとめ" class="nav-link" data-scroll-target="#まとめ">まとめ</a></li>
-  <li><a href="#参考資料" id="toc-参考資料" class="nav-link" data-scroll-target="#参考資料">参考資料</a></li>
+  <li><a href="#まとめ" id="toc-まとめ" class="nav-link" data-scroll-target="#まとめ">3. まとめ</a></li>
+  <li><a href="#参考資料" id="toc-参考資料" class="nav-link" data-scroll-target="#参考資料">4. 参考資料</a></li>
   </ul>
-</nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/uribo/221208tskm_ed_training/issues/new" class="toc-action">問題を報告</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -216,7 +216,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>ここでは、<a href="https://www.nstac.go.jp">独立行政法人統計センター</a>が公開する<a href="https://www.nstac.go.jp/use/literacy/ssdse/">教育用標準データセット</a>から、身近な統計データをグラフ上に可視化する例を示します。</p>
 <!-- 四国４県の統計データをグラフで表現しましょう。 -->
 <section id="データの用意" class="level2">
-<h2 class="anchored" data-anchor-id="データの用意">データの用意</h2>
+<h2 class="anchored" data-anchor-id="データの用意">1. データの用意</h2>
 <p><a href="https://www.nstac.go.jp/use/literacy/ssdse/">教育用標準データセット</a>は、データサイエンス演習、統計教育などに活用されることを期待したデータとして<a href="https://www.nstac.go.jp">独立行政法人統計センター</a>が公開しているものです。 データにはいくつかの種類があり、都道府県・市区町村別の集計値、時系列別での値などがあります。</p>
 <p>ここでは<code>SSDSE-県別推移（SSDSE-B）</code>のデータを利用します。 このデータは総務省統計局がとりまとめた「統計でみる都道府県・市区町村のすがた(社会・人口統計体系)」の結果を 都道府県・時系列毎に整理したものです。</p>
 <p>このうち、四国４県（徳島県、香川県、愛媛県、高知県）の項目を抜き出したデータを研修用に用意しています<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。 次のコマンドを実行するとデータが読み込まれます。</p>
@@ -274,7 +274,7 @@ $ `教育費（二人以上の世帯）`   &lt;dbl&gt; 10024, 9706, 12652, 11736
 </div>
 </section>
 <section id="グラフ表現" class="level2">
-<h2 class="anchored" data-anchor-id="グラフ表現">グラフ表現</h2>
+<h2 class="anchored" data-anchor-id="グラフ表現">2. グラフ表現</h2>
 <p>グラフの表現方法は次に示す通り様々な種類があります。 またこのほかにも多様なグラフが存在します。</p>
 <ul>
 <li>折れ線グラフ</li>
@@ -472,10 +472,10 @@ $ `教育費（二人以上の世帯）`   &lt;dbl&gt; 10024, 9706, 12652, 11736
 </section>
 </section>
 <section id="まとめ" class="level2">
-<h2 class="anchored" data-anchor-id="まとめ">まとめ</h2>
+<h2 class="anchored" data-anchor-id="まとめ">3. まとめ</h2>
 </section>
 <section id="参考資料" class="level2">
-<h2 class="anchored" data-anchor-id="参考資料">参考資料</h2>
+<h2 class="anchored" data-anchor-id="参考資料">4. 参考資料</h2>
 <ul>
 <li><a href="https://speakerdeck.com/s_uryu/rniyorudetake-shi-hua-todi-tu-biao-xian">Rによるデータ可視化と地図表現</a></li>
 </ul>
@@ -624,6 +624,26 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/uribo">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/u_ribo">
+      <i class="bi bi-twitter" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
 
 
 

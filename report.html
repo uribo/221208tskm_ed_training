@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>高等学校情報科におけるR言語の活用 - 地域データの分析とレポート作成</title>
+<title>高等学校情報科におけるR言語の活用 - レポート作成</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -100,7 +100,7 @@ ul.task-list li input[type="checkbox"] {
   </li>  
         <li>
     <a class="dropdown-item" href="./report.html">
- <span class="dropdown-text">4. 地域データの分析とレポート作成</span></a>
+ <span class="dropdown-text">4. レポート作成</span></a>
   </li>  
     </ul>
   </li>
@@ -115,14 +115,24 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目次</h2>
+   
+  <ul>
+  <li><a href="#quarto" id="toc-quarto" class="nav-link active" data-scroll-target="#quarto">1. Quarto</a>
+  <ul class="collapse">
+  <li><a href="#quartoによるレポート作成" id="toc-quartoによるレポート作成" class="nav-link" data-scroll-target="#quartoによるレポート作成">Quartoによるレポート作成</a></li>
+  </ul></li>
+  <li><a href="#参考資料" id="toc-参考資料" class="nav-link" data-scroll-target="#参考資料">参考資料</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/uribo/221208tskm_ed_training/issues/new" class="toc-action">問題を報告</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">地域データの分析とレポート作成</h1>
+<h1 class="title">レポート作成</h1>
 </div>
 
 
@@ -137,8 +147,38 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
+<p>これまでの研修内容で扱ってきた「グラフ」や「データ」、「地図」などは、「情報」として他者に伝える必要に迫られることがあります。 この研修の最後では、こうした情報伝達の方法の一つとして、レポート作成に焦点を当てます。 レポート作成はデータの集計、分析、可視化、地図表現といった作業内容を伝える手段として広く用いられる技能です。 そこには自身が行った作業内容のほかに文章や表・画像が入ります。</p>
+<p>このレポートもRを通して作成できます。 このことは、プログラミング言語による制御が可能ということを意味します。 この研修で扱ってきたことをおさらいしながらレポート作成に取りかかりましょう。</p>
+<section id="quarto" class="level2">
+<h2 class="anchored" data-anchor-id="quarto">1. Quarto</h2>
+<p><a href="https://quarto.org">Quarto</a>はオープンソースで開発される文書生成システムの一種です。 <a href="https://pandoc.org">Pandoc</a>を利用することで、文書中にRやPython、Juliaなどのプログラミング言語の実行結果を含めたり、word、HTML、PDFなどの多様な文書の出力形式をサポートしています。 （この研修資料もまた<a href="https://github.com/uribo/221208tskm_ed_training/blob/main/report.qmd">Quartoで作成されています</a>！）</p>
+<p>Quartoの導入には、Quarto本体のインストールが必要ですが、研修の実行環境であるRStudioでは、Quartoによる文書生成の機能が提供され、すぐに試せる状態です。 RStudioのメニューから、<code>File</code>、<code>New File</code>の順に進み、<code>Quarto Document...</code>を選択、文書のタイトルや出力形式を選択する画面を立ち上げます。 これらの設定は後で変更が可能できます。 値を入力したら<code>Create</code>ボタンをクリックします。 するとRStudioの一部にQuartoのためのファイルが作成されます（この時点では保存はされていません）。</p>
+<p><img src="images/quarto_new_file.gif" class="img-fluid" alt="Quartoファイル(.qmd)の新規作成の流れ"> Quartoの基本は次の3要素に分かれます。</p>
+<ol type="1">
+<li>文書の設定を行うYAMLフロントマター</li>
+<li>文章… HTMLやmarkdown、LaTexによる文字の装飾が可能</li>
+<li>コードブロック… RやPythonなどのコードを記述。実行結果を出力する文書に含められる</li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/quarto_components.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">qmdファイルの構成要素</figcaption><p></p>
+</figure>
+</div>
+<p>それではRStudioからQuartoファイルを作成してみましょう。</p>
+<section id="quartoによるレポート作成" class="level3">
+<h3 class="anchored" data-anchor-id="quartoによるレポート作成">Quartoによるレポート作成</h3>
+<p>ファイルを作成したら、任意の文章やコードを記述してレポートを作っていきます。 ですがまずはQuartoの生成物を表示するところから始めましょう。 qmdファイルを新規作成した状態ですでにコードと文章が含まれた状態だと思います。 そのまま、画面上部にある<code>Render</code>ボタンをクリックしましょう。 するとQuartoが記述されたRコードの実行と指定された出力形式（<code>format: html</code>）でのファイル作成を行います。</p>
+</section>
+</section>
+<section id="参考資料" class="level2">
+<h2 class="anchored" data-anchor-id="参考資料">参考資料</h2>
+<ul>
+<li><a href="https://speakerdeck.com/s_uryu/quarto-get-started">Quartoを使ってみませんか</a></li>
+</ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -275,6 +315,26 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/uribo">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/u_ribo">
+      <i class="bi bi-twitter" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
 
 
 
