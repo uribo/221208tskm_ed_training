@@ -24,6 +24,8 @@ R言語の実行環境は各自のコンピュータ上に構築していただ�
 当日の研修では[binder](https://mybinder.org)を利用します。binderはウェブブラウザ上で実行可能なRの環境を提供します。以下のボタンをクリックまたはURLから直接リンクいただくことでbinderが起動します。
 そのまましばらく待つとRStudio (Server)の画面に切り替わるので、そこからRを操作します。
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/uribo/221208tskm_ed_training/main?urlpath=rstudio)
+
 この研修ではR言語についての詳しい解説をしませんが、代わりに[参考資料](#参考資料)を掲載します。Rの操作で不明な点に遭遇した、詳しくRを知りたい場合に適宜参考にしてください。
 
 ### 講師
