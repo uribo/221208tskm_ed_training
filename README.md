@@ -8,11 +8,26 @@
 
 ### 研修の進め方
 
-研修内容はこのウェブページ上またはスライド（公開準備中）から閲覧可能です。 研修を通して[R言語](https://cran.r-project.org)によるプログラミングを行います。
+研修内容は[ウェブページ](https://uribo.github.io/221208tskm_ed_training/)またはスライド（公開準備中）から閲覧可能です。 研修を通して[R言語](https://cran.r-project.org)によるプログラミングを行います。
 
 R言語の実行環境は各自のコンピュータ上に構築していただくことが望ましいですが、 当日の研修では[binder](https://mybinder.org)を利用します。binderはウェブブラウザ上で実行可能なRの環境を提供します。以下のボタンをクリックまたはURLから直接リンクいただくことでbinderが起動します。 そのまましばらく待つとRStudio (Server)の画面に切り替わるので、そこからRを操作します。
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/uribo/221208tskm_ed_training/main?urlpath=rstudio)
+
+手元のコンピューター上で行うためには、必要なファイル一式をダウンロードして操作を行います。
+これにはRとRStudioがインストールされていることが前提となります。
+
+このページ https://github.com/uribo/221208tskm_ed_training の上部にある緑色の"Code"ボタンをクリック、 さらにDownload ZIPをクリックしてzipファイルをダウンロードします。 zipファイルを展開、`221208tskm_ed_training.Rproj`ファイルをダブルクリックするとRStudioが起動します。
+
+この状態ではRスクリプトを動かすためのパッケージがインストールされていないため、 次のコマンドをコンソールで実行します。
+
+``` r
+install.packages("renv")
+renv::restore()
+```
+
+パッケージのインストールを促すメッセージが出力されるので、`y`をコンソール上で入力します。 パッケージのインストールが完了したら準備完了です。
+
 
 ### 講師
 
