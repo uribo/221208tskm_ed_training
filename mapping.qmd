@@ -76,7 +76,7 @@ ne_jpn_shikoku
 
 このほか、行政区域のデータには[国土数値情報ダウンロードサービス](https://nlftp.mlit.go.jp/ksj/)の[`行政区域データ`](https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v3_1.html)などが利用できます。国土数値情報の行政区域データは市区町村別にポリゴンデータがあたえられているため、細かな地域の可視化や分析に役立ちます。
 
-## 2. 地図の作成
+## 3. 地図の作成
 
 Rでの地理空間データの可視化表現として、インタラクティブに操作できる地図、[グラフの作成](plot.html)の中で扱ったggplot2による静的な図の作成ができます。
 
@@ -114,6 +114,42 @@ ggplot() +
   labs(title = "徳島県緊急避難場所の位置")
 ```
 
-## 地理空間データの操作
+```{r}
+#| eval: false
+#| echo: false
+sf_pref36 <- 
+  st_read("~/Downloads/N03-20220101_36_GML/N03-22_36_220101.geojson")
+ggplot() +
+  geom_sf(data = sf_pref36) +
+  geom_sf(data = sf_hinanjyo,
+          aes(color = city),
+          show.legend = FALSE)+
+  coord_sf()
+```
 
-## まとめ
+## 4. 地理空間データの処理
+
+地理空間データの処理はsfパッケージを介して行います。
+例えば、ポリゴンデータから面積を計算する、2地点（ポイント）間の距離を求める、などが可能です。
+
+```{r}
+# 面積の算出
+st_area(ne_jpn_shikoku)
+
+# 単位の変換
+units::set_units(st_area(ne_jpn_shikoku), km^2)
+```
+```{r}
+# 距離の計算
+st_distance(
+  sf_hinanjyo[1, ], # 板野町防災ステーション (徳島県板野郡板野町川端字新手崎18-1)
+  sf_hinanjyo[10, ] # 阿南市クリーンピュア (阿南市熊谷町定方44)
+)
+```
+
+```{r}
+# ポリゴンの重心点
+st_centroid(ne_jpn_shikoku)
+```
+
+## 5. まとめ
