@@ -10,7 +10,7 @@ title: "グラフの作成"
 
 <!-- 四国４県の統計データをグラフで表現しましょう。 -->
 
-## データの用意
+## 1. データの用意
 
 [教育用標準データセット](https://www.nstac.go.jp/use/literacy/ssdse/)は、データサイエンス演習、統計教育などに活用されることを期待したデータとして[独立行政法人統計センター](https://www.nstac.go.jp)が公開しているものです。
 データにはいくつかの種類があり、都道府県・市区町村別の集計値、時系列別での値などがあります。
@@ -48,7 +48,7 @@ df_ssdse_b_tiny_shikoku2019 <-
 df_ssdse_b_tiny_shikoku2019
 ```
 
-## グラフ表現
+## 2. グラフ表現
 
 グラフの表現方法は次に示す通り様々な種類があります。
 またこのほかにも多様なグラフが存在します。
@@ -231,9 +231,9 @@ ggplot(df_ssdse_b_tiny_shikoku) +
        subtitle = "元データ: 独立行政法人統計センター 教育用標準データセット SSDSE-B")
 ```
 
-## まとめ
+## 3. まとめ
 
-## 参考資料
+## 4. 参考資料
 
 - [Rによるデータ可視化と地図表現](https://speakerdeck.com/s_uryu/rniyorudetake-shi-hua-todi-tu-biao-xian)
 

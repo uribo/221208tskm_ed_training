@@ -6,6 +6,7 @@ lang: ja
 website:
   title: "高等学校情報科におけるR言語の活用"
   repo-url: https://github.com/uribo/221208tskm_ed_training
+  repo-actions: [issue]
   open-graph: false
   navbar:
     pinned: true
@@ -23,9 +24,15 @@ website:
           - href: mapping.html
             text: "3. 地図へのマッピング"
           - href: report.html
-            text: "4. 地域データの分析とレポート作成"
-    repo-url: http://github.com/uribo/221208tskm_ed_training
-    repo-actions: [issue]
+            text: "4. レポート作成"
+  page-navigation: true
+  page-footer: 
+    background: light
+    right: 
+      - icon: github
+        href: https://github.com/uribo
+      - icon: twitter 
+        href: https://twitter.com/u_ribo
 
 ascii: false
 callout-appearance: default
