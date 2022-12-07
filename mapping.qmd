@@ -109,7 +109,7 @@ ggplot() +
   geom_sf(data = filter(ne_jpn_shikoku, name == "Tokushima")) +
   geom_sf(data = sf_hinanjyo,
           aes(color = city),
-          show.legend = FALSE)+
+          show.legend = FALSE) +
   coord_sf() +
   labs(title = "徳島県緊急避難場所の位置")
 ```
