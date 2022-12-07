@@ -7,23 +7,24 @@ website:
   title: "高等学校情報科におけるR言語の活用"
   repo-url: https://github.com/uribo/221208tskm_ed_training
   repo-actions: [issue]
-  open-graph: false
+  open-graph: true
+  search: true
   navbar:
     pinned: true
     background: info
     foreground: light
     left:
       - href: index.qmd
-        text: Home
+        text: "Home"
       - text: 研修内容
         menu:
-          - href: plot.html
+          - href: plot.qmd
             text: "1. グラフの作成"
-          - href: shelter.html
+          - href: shelter.qmd
             text: "2. オープンデータの活用"
-          - href: mapping.html
+          - href: mapping.qmd
             text: "3. 地図へのマッピング"
-          - href: report.html
+          - href: report.qmd
             text: "4. レポート作成"
   page-navigation: true
   page-footer: 

@@ -8,8 +8,6 @@ title: "グラフの作成"
 
 ここでは、[独立行政法人統計センター](https://www.nstac.go.jp)が公開する[教育用標準データセット](https://www.nstac.go.jp/use/literacy/ssdse/)から、身近な統計データをグラフ上に可視化する例を示します。
 
-<!-- 四国４県の統計データをグラフで表現しましょう。 -->
-
 ## 1. データの用意
 
 [教育用標準データセット](https://www.nstac.go.jp/use/literacy/ssdse/)は、データサイエンス演習、統計教育などに活用されることを期待したデータとして[独立行政法人統計センター](https://www.nstac.go.jp)が公開しているものです。
@@ -233,8 +231,14 @@ ggplot(df_ssdse_b_tiny_shikoku) +
 
 ## 3. まとめ
 
+:::{.callout-tip}
+## 演習
+
+四国４県の統計データ（`df_ssdse_b_tiny_shikoku`または`df_ssdse_b_tiny_shikoku2019`）から、興味のある項目についてグラフで表現してみましょう。
+
+:::
+
 ## 4. 参考資料
 
 - [Rによるデータ可視化と地図表現](https://speakerdeck.com/s_uryu/rniyorudetake-shi-hua-todi-tu-biao-xian)
-
 
