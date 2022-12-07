@@ -122,6 +122,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 }</script>
 
 
+<meta property="og:title" content="高等学校情報科におけるR言語の活用 - グラフの作成">
+<meta property="og:description" content="数値や表形式でのデータ表現は、データの内容を示すのに使うことができます。 一方でデータの量が多い場合やデータ間の比較が困難な場合があります。 グラフによるデータの表現は、データの傾向や特徴を視覚的に示すのに適しています。">
+<meta property="og:site-name" content="高等学校情報科におけるR言語の活用">
 </head>
 
 <body class="nav-fixed">
@@ -214,7 +217,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <p>数値や表形式でのデータ表現は、データの内容を示すのに使うことができます。 一方でデータの量が多い場合やデータ間の比較が困難な場合があります。 グラフによるデータの表現は、データの傾向や特徴を視覚的に示すのに適しています。</p>
 <p>ここでは、<a href="https://www.nstac.go.jp">独立行政法人統計センター</a>が公開する<a href="https://www.nstac.go.jp/use/literacy/ssdse/">教育用標準データセット</a>から、身近な統計データをグラフ上に可視化する例を示します。</p>
-<!-- 四国４県の統計データをグラフで表現しましょう。 -->
 <section id="データの用意" class="level2">
 <h2 class="anchored" data-anchor-id="データの用意">1. データの用意</h2>
 <p><a href="https://www.nstac.go.jp/use/literacy/ssdse/">教育用標準データセット</a>は、データサイエンス演習、統計教育などに活用されることを期待したデータとして<a href="https://www.nstac.go.jp">独立行政法人統計センター</a>が公開しているものです。 データにはいくつかの種類があり、都道府県・市区町村別の集計値、時系列別での値などがあります。</p>
@@ -473,6 +475,19 @@ $ `教育費（二人以上の世帯）`   &lt;dbl&gt; 10024, 9706, 12652, 11736
 </section>
 <section id="まとめ" class="level2">
 <h2 class="anchored" data-anchor-id="まとめ">3. まとめ</h2>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+演習
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>四国４県の統計データ（<code>df_ssdse_b_tiny_shikoku</code>または<code>df_ssdse_b_tiny_shikoku2019</code>）から、興味のある項目についてグラフで表現してみましょう。</p>
+</div>
+</div>
 </section>
 <section id="参考資料" class="level2">
 <h2 class="anchored" data-anchor-id="参考資料">4. 参考資料</h2>

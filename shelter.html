@@ -122,6 +122,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 }</script>
 
 
+<meta property="og:title" content="高等学校情報科におけるR言語の活用 - オープンデータの活用">
+<meta property="og:description" content="オープンデータの取得から操作、可視化まで。">
+<meta property="og:site-name" content="高等学校情報科におけるR言語の活用">
 </head>
 
 <body class="nav-fixed">
@@ -349,15 +352,12 @@ $ 備考     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
 <ul>
 <li><code>select()</code>… 列の選択</li>
 <li><code>filter()</code>… 行の絞り込み</li>
-<li><code>mutate()</code>… 値の編集</li>
+<li><code>mutate()</code>, <code>transmute()</code>… 値の編集</li>
+<li><code>group_by()</code>, <code>summarise()</code> … グループごとに値を集計する</li>
+<li><code>arrange()</code>… 行の並び替え</li>
+<li><code>count()</code>… 項目の頻度を数える</li>
+<li><code>*_join()</code> … データフレームの結合</li>
 </ul>
-<!--  
-
-
-- arrange()
-- group_by(), summarise()
-
--->
 <p>データフレームを確認するとわかるように、このデータには複数の「写真」の列が存在します。 これらの列の中には値がありません。 値がない状態を「欠損」は呼ばれ、そのことを表現するために欠損値 (<code>NA</code>) が使われます。 こうした欠損値からなる列は不要と判断し、列を絞り込みましょう。 列の選択は<code>select()</code>関数で行います。この関数の引数に、残したい、または削除したい変数を記述して実行します<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>。 関心のある列にデータを制限することで、データの見通しがよくなります。</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df_hinanjyo <span class="ot">&lt;-</span> </span>
@@ -468,9 +468,19 @@ $ 分類     &lt;chr&gt; "指定緊急避難場所（法指定）", "指定緊�
 # … with 36 more rows</code></pre>
 </div>
 </div>
+<p>なお、この処理は<code>group_by()</code>関数と<code>summarise()</code>関数を組み合わせても実行できます。<code>group_by()</code>は指定した列の項目ごとにグループを作成し、グループに対する操作を可能にします。 <code>summarise()</code>関数はそうしたグループへの集計を行う際に利用します。 例えば、クラスで行った教科ごとの平均点を求める際、教科をグループとしてその平均値を求める、といった処理がこの2つの関数を組み合わせることで可能となります。</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># いくつかの行は欠損値のまま</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(df_tokushima_hinanjyo_count, <span class="fu">is.na</span>(city))</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 下記と同じ結果を得る</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># count(df_hinanjyo, city, sort = TRUE)</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">arrange</span>(<span class="fu">summarise</span>(<span class="fu">group_by</span>(df_hinanjyo,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                           city),</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n =</span> <span class="fu">n</span>()),</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">desc</span>(n))</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>グループ化した項目を数えるのに<code>n()</code>関数を使います。 このようなグループごとの項目の集計は頻繁に行う処理のため、ショートカットとして<code>count()</code>関数が用意されています。</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># いくつかの行は欠損値のまま</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(df_tokushima_hinanjyo_count, <span class="fu">is.na</span>(city))</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 2
   city      n
@@ -481,10 +491,10 @@ $ 分類     &lt;chr&gt; "指定緊急避難場所（法指定）", "指定緊�
 <p>市町村別の避難場所の集計結果を見ると、三好市が最も数が多いことがわかります。 しかしこの値は人口や面積を考慮した値ではありません。 人口や面積の単位あたりの避難場所の数を比較することで、市町村別の評価が可能となります。</p>
 <p><a href="plot.html">グラフの作成</a>で利用した<a href="https://www.nstac.go.jp/use/literacy/ssdse/">教育用標準データセット</a>の中には、市区町村別の統計データを記録したものもあります。 データはすでにダウンロードされ、徳島県の市町村に関する情報が参照できる状態となっています。 次のコマンドを実行し、データをRに読み込みましょう。</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>df_ssdse_a_tiny_tokushima <span class="ot">&lt;-</span> </span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_rds</span>(<span class="fu">here</span>(<span class="st">"data-raw/ssdse_a_tiny_tokushima.rds"</span>))</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>df_ssdse_a_tiny_tokushima</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>df_ssdse_a_tiny_tokushima <span class="ot">&lt;-</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_rds</span>(<span class="fu">here</span>(<span class="st">"data-raw/ssdse_a_tiny_tokushima.rds"</span>))</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>df_ssdse_a_tiny_tokushima</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 24 × 4
    市区町村 `人口・世帯数_総人口` `総面積（北方地域及び竹島を除く）` 可住地面積
@@ -504,13 +514,13 @@ $ 分類     &lt;chr&gt; "指定緊急避難場所（法指定）", "指定緊�
 </div>
 <p>dplyrパッケージではデータフレームを結合する関数<code>*_join()</code>を提供します。 関数の引数に対象となる2つのデータフレームを指定し、結合の際のキーとなる変数を引数byに与えて実行します。</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>df_tokushima_hinanjyo_count <span class="ot">&lt;-</span> </span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  df_tokushima_hinanjyo_count,</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  df_ssdse_a_tiny_tokushima,</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"city"</span> <span class="ot">=</span> <span class="st">"市区町村"</span>))</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>df_tokushima_hinanjyo_count</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>df_tokushima_hinanjyo_count <span class="ot">&lt;-</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  df_tokushima_hinanjyo_count,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  df_ssdse_a_tiny_tokushima,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"city"</span> <span class="ot">=</span> <span class="st">"市区町村"</span>))</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>df_tokushima_hinanjyo_count</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 16 × 5
    city         n `人口・世帯数_総人口` 総面積（北方地域及び竹島を除く…¹ 可住…²
@@ -538,17 +548,17 @@ $ 分類     &lt;chr&gt; "指定緊急避難場所（法指定）", "指定緊�
 <p><code>city</code>と<code>n</code>の2列からなるデータフレーム<code>df_tokushima_hinanjyo_count</code>に、<code>df_ssdse_a_tiny_tokushima</code>がもつ列の情報が加わったことがわかります。</p>
 <p>追加された情報から、避難場所の数を単位当たり数を求めてみます。</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 災害種別_洪水</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>df_tokushima_hinanjyo_count <span class="ot">&lt;-</span> </span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(df_tokushima_hinanjyo_count,</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>          <span class="st">`</span><span class="at">市町村</span><span class="st">`</span> <span class="ot">=</span> city,</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>          <span class="st">`</span><span class="at">避難場所件数</span><span class="st">`</span> <span class="ot">=</span> n,</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>          <span class="st">`</span><span class="at">避難場所件数(人口1万人あたり)</span><span class="st">`</span> <span class="ot">=</span> (n <span class="sc">/</span> <span class="st">`</span><span class="at">人口・世帯数_総人口</span><span class="st">`</span>) <span class="sc">*</span> <span class="dv">10000</span>)</span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>df_tokushima_hinanjyo_count <span class="ot">&lt;-</span></span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 人口1万人当たりの避難場所件数の順に並び替え</span></span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(df_tokushima_hinanjyo_count,</span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>          <span class="fu">desc</span>(<span class="st">`</span><span class="at">避難場所件数(人口1万人あたり)</span><span class="st">`</span>))</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 災害種別_洪水</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>df_tokushima_hinanjyo_count <span class="ot">&lt;-</span> </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(df_tokushima_hinanjyo_count,</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>          <span class="st">`</span><span class="at">市町村</span><span class="st">`</span> <span class="ot">=</span> city,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>          <span class="st">`</span><span class="at">避難場所件数</span><span class="st">`</span> <span class="ot">=</span> n,</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>          <span class="st">`</span><span class="at">避難場所件数(人口1万人あたり)</span><span class="st">`</span> <span class="ot">=</span> (n <span class="sc">/</span> <span class="st">`</span><span class="at">人口・世帯数_総人口</span><span class="st">`</span>) <span class="sc">*</span> <span class="dv">10000</span>)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>df_tokushima_hinanjyo_count <span class="ot">&lt;-</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 人口1万人当たりの避難場所件数の順に並び替え</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(df_tokushima_hinanjyo_count,</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>          <span class="fu">desc</span>(<span class="st">`</span><span class="at">避難場所件数(人口1万人あたり)</span><span class="st">`</span>))</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>人口1万人あたりで見ても、三好市の避難場所件数が最も多いことに変わりはありませんでしたが、 勝浦川の流域に位置する勝浦町、上勝町が上位になりました。</p>
 </section>
@@ -557,16 +567,16 @@ $ 分類     &lt;chr&gt; "指定緊急避難場所（法指定）", "指定緊�
 <p>続いて、市町村別に避難場所の数を集計したデータ <code>df_city_count</code> をもとに、簡単なグラフを作成してみましょう。</p>
 <p>避難場所の数（数量）を市町村で比較する際、適したグラフの種類は何でしょうか。 ここでは棒グラフと円グラフによるグラフ作成の例を示します。</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> </span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">data =</span> df_tokushima_hinanjyo_count,</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(市町村, 避難場所件数)) <span class="sc">+</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 棒グラフの指定</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> <span class="st">"identity"</span>, <span class="co"># n （市町村別の避難場所の数）が棒の高さに用いられる</span></span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"#3F54B4"</span> <span class="co"># 棒の塗りつぶしの色</span></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">data =</span> df_tokushima_hinanjyo_count,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(市町村, 避難場所件数)) <span class="sc">+</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 棒グラフの指定</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">stat =</span> <span class="st">"identity"</span>, <span class="co"># n （市町村別の避難場所の数）が棒の高さに用いられる</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"#3F54B4"</span> <span class="co"># 棒の塗りつぶしの色</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -583,8 +593,8 @@ $ 分類     &lt;chr&gt; "指定緊急避難場所（法指定）", "指定緊�
 </ol>
 <p>この問題を改善してみましょう。 まず、1の問題はx軸に複数の項目を並べる際に生じる問題です。 特に項目数が多い場合、横幅を広くとらないと文字が潰れてしまいます。 根本的な対策は、x軸とy軸を入れ替えて表示することです。 これにより、項目の間隔を気にする必要がなくなります（ただし高さを十分にする）。 すでに作成したグラフに対して、<code>coord_flip()</code>関数を適用するとx軸とy軸の入れ替えが行われます。</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -596,17 +606,17 @@ $ 分類     &lt;chr&gt; "指定緊急避難場所（法指定）", "指定緊�
 </div>
 <p>続いて市町村名と避難場所の件数の関係をわかりやすく伝える工夫をしてみます。 現在の図は適当に市町村名が並んでいるように見えるため、避難場所の件数で入れ替えるようにします。 合わせてグラフ全体の見た目も調整しておきましょう。</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> </span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">data =</span> df_tokushima_hinanjyo_count,</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(forcats<span class="sc">::</span><span class="fu">fct_reorder</span>(市町村, 避難場所件数), 避難場所件数)) <span class="sc">+</span></span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>,</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> <span class="st">"#3F54B4"</span>) <span class="sc">+</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"避難場所の件数"</span>) <span class="sc">+</span></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"徳島県内緊急避難場所（災害種別 洪水）の市町村別件数"</span>)</span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">data =</span> df_tokushima_hinanjyo_count,</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(forcats<span class="sc">::</span><span class="fu">fct_reorder</span>(市町村, 避難場所件数), 避難場所件数)) <span class="sc">+</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> <span class="st">"#3F54B4"</span>) <span class="sc">+</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"避難場所の件数"</span>) <span class="sc">+</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"徳島県内緊急避難場所（災害種別 洪水）の市町村別件数"</span>)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>p</span></code><button title="コピー" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -619,6 +629,32 @@ $ 分類     &lt;chr&gt; "指定緊急避難場所（法指定）", "指定緊�
 </section>
 <section id="まとめ" class="level2">
 <h2 class="anchored" data-anchor-id="まとめ">5. まとめ</h2>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+演習
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li><p>徳島県オープンデータポータルサイトから適当なデータを見つけ、ファイルをRに読み込みましょう。</p></li>
+<li><p>読み込んだデータをdplyrパッケージのデータ操作のための関数を使って処理してみましょう。</p></li>
+</ol>
+<ul>
+<li><code>select()</code></li>
+<li><code>filter()</code></li>
+<li><code>mutate()</code>, <code>transmute()</code></li>
+<li><code>group_by()</code>, <code>summarise()</code></li>
+<li><code>arrange()</code></li>
+<li><code>count()</code></li>
+<li><code>*_join()</code></li>
+</ul>
+<p>などの関数が利用できます</p>
+</div>
+</div>
 
 
 </section>
