@@ -44,23 +44,10 @@ Rでは文字列を引用符で囲むルールが存在します。
 また、locale引数にもファイル読み込みのためのオプションを指定し、コードを実行します。
 
 ```{r}
-#| eval: false
-#| echo: true
-read_csv(
-    file = "コピーしたURL",
+read_csv(here("data-raw/tksm_shelter_for_flood.csv"),
     # 読み込みのオプション
     # 日本語が使われる一部のファイルを読み込むと、文字化けをすることがあります。
     # このファイルでも日本語が使われているため、次のオプションの指定で文字化けを回避します。
-    locale = locale(encoding = "SHIFT-JIS"))
-```
-
-```{r}
-#| include: false
-if (!fs::file_exists(here("data-raw/tksm_shelter_for_flood.csv"))) {
-  download.file("https://opendata.pref.tokushima.lg.jp/dataset/487/resource/6553/%E6%B4%AA%E6%B0%B4_%E7%99%BB%E9%8C%B2%E3%83%87%E3%83%BC%E3%82%BF%E4%B8%80%E8%A6%A7_2022%E5%B9%B410%E6%9C%8826%E6%97%A5_15%E6%99%8214%E5%88%86.csv",
-              here("data-raw/tksm_shelter_for_flood.csv"))
-}
-read_csv(here("data-raw/tksm_shelter_for_flood.csv"),
          locale = locale(encoding = "SHIFT-JIS"))
 ```
 
@@ -69,19 +56,8 @@ Rでは処理の結果を再利用するために、オブジェクトを利用�
 オブジェクトへの保存は「代入」とも呼ばれます。
 代入は `<-` （代入演算子）の左側に保存先のオブジェクト名、右側に保存したい処理内容を記述して実行します。
 
-
 ```{r}
-#| eval: false
-#| echo: true
 # 読み込んだcsvの内容を df_hinanjyo として記録する
-df_hinanjyo <- 
-  read_csv(
-    file = "https://opendata.pref.tokushima.lg.jp/dataset/487/resource/6553/洪水_登録データ一覧_2022年10月26日_15時14分.csv",
-           locale = locale(encoding = "SHIFT-JIS"))
-```
-
-```{r}
-#| include: false
 df_hinanjyo <- 
   read_csv(here("data-raw/tksm_shelter_for_flood.csv"),
          locale = locale(encoding = "SHIFT-JIS"))
