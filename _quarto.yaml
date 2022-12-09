@@ -9,6 +9,7 @@ website:
   repo-actions: [issue]
   open-graph: true
   search: true
+  google-analytics: "G-TFYL3R3FJ1"
   navbar:
     pinned: true
     background: info
