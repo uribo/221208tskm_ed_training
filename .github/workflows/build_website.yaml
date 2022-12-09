@@ -39,6 +39,8 @@ jobs:
           use-public-rspm: true
 
       - uses: r-lib/actions/setup-renv@v2
+        with:
+          cache-version: 2
 
       - name: Build site 🔧
         run: Rscript scripts/build_website.R

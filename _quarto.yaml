@@ -8,6 +8,7 @@ lang: ja
 website:
   title: "高等学校情報科におけるR言語の活用"
   description: "学習指導要領に記載された「情報I」「情報II」の一部の内容をR言語を用いて修得できるように解説します。"
+  site-url: https://uribo.github.io/221208tskm_ed_training
   repo-url: https://github.com/uribo/221208tskm_ed_training
   repo-actions: [issue]
   twitter-card: 
