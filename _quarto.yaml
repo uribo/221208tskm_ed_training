@@ -1,5 +1,7 @@
 project:
   type: website
+  resources:
+    - "images/twitter-card.png"
 
 lang: ja
 
@@ -8,7 +10,9 @@ website:
   description: "学習指導要領に記載された「情報I」「情報II」の一部の内容をR言語を用いて修得できるように解説します。"
   repo-url: https://github.com/uribo/221208tskm_ed_training
   repo-actions: [issue]
-  twitter-card: true
+  twitter-card: 
+    creator: "@u_ribo"
+    image: "/images/twitter-card.png"
   open-graph: true
   search: true
   google-analytics: "G-TFYL3R3FJ1"
