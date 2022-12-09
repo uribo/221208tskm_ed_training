@@ -1,5 +1,7 @@
 # 徳島県教科情報指導者研修「高等学校情報科におけるR言語の活用」
 
+![](images/twitter-card.png)
+
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/uribo/221208tskm_ed_training/main?urlpath=rstudio)
 
 ## 概要
